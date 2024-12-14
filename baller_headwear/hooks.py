@@ -214,4 +214,4 @@ app_license = "MIT"
 # 	"baller_headwear.auth.validate"
 # ]
 
-fixtures = ["Custom Field","Print Format"]
+fixtures = ["Custom Field","Print Format","Client Script"]
