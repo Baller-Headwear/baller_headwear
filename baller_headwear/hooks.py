@@ -213,3 +213,5 @@ app_license = "MIT"
 # auth_hooks = [
 # 	"baller_headwear.auth.validate"
 # ]
+
+fixtures = ["Custom Field","Print Format"]
