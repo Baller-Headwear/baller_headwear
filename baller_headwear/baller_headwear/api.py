@@ -1,6 +1,7 @@
 import json
 import frappe
 from frappe import _, msgprint
+from datetime import datetime
 from frappe.model.mapper import get_mapped_doc
 from frappe.query_builder.functions import Sum
 from frappe.utils import cint, cstr, flt, get_link_to_form, getdate, new_line_sep, nowdate
@@ -99,3 +100,60 @@ def make_stock_entry(source_name, target_doc=None):
 	)
 
 	return doclist
+
+@frappe.whitelist()
+def set_custom_id_fields_for_transaction_date(doc, method):
+
+    if doc.transaction_date:
+
+        transaction_date = datetime.strptime(doc.transaction_date, '%Y-%m-%d')
+
+        month = transaction_date.month
+        year = transaction_date.year
+        
+
+        year_formatted = str(year)[-2:]  
+        month_formatted = f"{month:02d}" 
+        
+
+        doc.custom_id_month = month_formatted
+        doc.custom_id_year = year_formatted
+
+@frappe.whitelist()
+def set_custom_id_fields_for_posting_date(doc, method):
+
+    if doc.posting_date:
+
+        posting_date = datetime.strptime(doc.posting_date, '%Y-%m-%d')
+
+        month = posting_date.month
+        year = posting_date.year
+        
+
+        year_formatted = str(year)[-2:]  
+        month_formatted = f"{month:02d}" 
+        
+
+        doc.custom_id_month = month_formatted
+        doc.custom_id_year = year_formatted
+
+def parse_date(date_string):
+    try:
+        return datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S.%f')
+    except ValueError:
+        return datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S')
+
+
+@frappe.whitelist() 
+def set_custom_id_fields_for_work_order(doc, method):
+    if doc.planned_start_date:
+        planned_start_date = parse_date(doc.planned_start_date)
+
+        month = planned_start_date.month
+        year = planned_start_date.year
+
+        year_formatted = str(year)[-2:]  
+        month_formatted = f"{month:02d}" 
+
+        doc.custom_id_month = month_formatted
+        doc.custom_id_year = year_formatted

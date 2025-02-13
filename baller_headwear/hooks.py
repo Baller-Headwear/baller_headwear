@@ -116,6 +116,42 @@ app_license = "MIT"
 # ---------------
 # Hook on document methods and events
 
+doc_events = {
+    "Purchase Order": {
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_transaction_date"
+    },
+    "Purchase Invoice": {
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
+    },
+    "Purchase Receipt": {
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
+    },
+    "Sales Order": {
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_transaction_date"
+    },
+    "Sales Invoice": {
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
+    },
+    "Quotation": {
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_transaction_date"
+    },
+    "Work Order": {
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_work_order"
+    },
+    "Payment Entry": {
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
+    },
+    "Journal Entry": {
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
+    },
+    "Material Request": {
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_transaction_date"
+    },
+    "Production Plan": {
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
+    }
+}
+
 # doc_events = {
 # 	"*": {
 # 		"on_update": "method",
