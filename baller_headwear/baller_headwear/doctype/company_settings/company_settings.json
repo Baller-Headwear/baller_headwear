@@ -1,0 +1,41 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-02-21 12:06:09.076767",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "vietnam_company_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "vietnam_company_name",
+   "fieldtype": "Link",
+   "label": "Vietnam Company Name",
+   "options": "Company"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-02-21 12:06:52.858058",
+ "modified_by": "Administrator",
+ "module": "Baller Headwear",
+ "name": "Company Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

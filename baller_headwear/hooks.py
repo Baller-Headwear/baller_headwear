@@ -149,6 +149,9 @@ doc_events = {
     },
     "Production Plan": {
         "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
+    },
+    "Stock Entry": {
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
     }
 }
 

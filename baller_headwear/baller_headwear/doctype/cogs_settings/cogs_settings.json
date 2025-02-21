@@ -1,0 +1,97 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-02-20 12:48:18.775486",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "direct_material",
+  "labour_cost",
+  "machinery_depreciation",
+  "factory_rental_cost",
+  "production_tool_cost",
+  "customs_and_shipping",
+  "material_cost",
+  "factory_staff_cost",
+  "other_expenses"
+ ],
+ "fields": [
+  {
+   "fieldname": "direct_material",
+   "fieldtype": "Table",
+   "label": "Direct Material",
+   "options": "Default Accounts"
+  },
+  {
+   "fieldname": "labour_cost",
+   "fieldtype": "Table",
+   "label": "Labour Cost",
+   "options": "Default Accounts"
+  },
+  {
+   "fieldname": "machinery_depreciation",
+   "fieldtype": "Table",
+   "label": "Machinery Depreciation",
+   "options": "Default Accounts"
+  },
+  {
+   "fieldname": "factory_rental_cost",
+   "fieldtype": "Table",
+   "label": "Factory Rental Cost",
+   "options": "Default Accounts"
+  },
+  {
+   "fieldname": "production_tool_cost",
+   "fieldtype": "Table",
+   "label": "Production Tool Cost",
+   "options": "Default Accounts"
+  },
+  {
+   "fieldname": "customs_and_shipping",
+   "fieldtype": "Table",
+   "label": "Customs and Shipping",
+   "options": "Default Accounts"
+  },
+  {
+   "fieldname": "material_cost",
+   "fieldtype": "Table",
+   "label": "Material Cost",
+   "options": "Default Accounts"
+  },
+  {
+   "fieldname": "factory_staff_cost",
+   "fieldtype": "Table",
+   "label": "Factory Staff Cost",
+   "options": "Default Accounts"
+  },
+  {
+   "fieldname": "other_expenses",
+   "fieldtype": "Table",
+   "label": "Other Expenses",
+   "options": "Default Accounts"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-02-20 12:54:13.988623",
+ "modified_by": "Administrator",
+ "module": "Baller Headwear",
+ "name": "Cogs Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
