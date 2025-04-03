@@ -139,10 +139,10 @@ doc_events = {
         "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_work_order"
     },
     "Payment Entry": {
-        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date_payment_entry"
     },
     "Journal Entry": {
-        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date_jv"
     },
     "Material Request": {
         "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_transaction_date"

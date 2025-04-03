@@ -3,11 +3,88 @@
   "docstatus": 0,
   "doctype": "Client Script",
   "dt": "Sales Order",
+  "enabled": 0,
+  "modified": "2025-01-22 13:46:15.718293",
+  "module": "Baller Headwear",
+  "name": "Custom Naming Series (Sales Order)",
+  "script": "frappe.ui.form.on('Sales Order', {\n    before_save: function(frm) {\n\n        let transaction_date = frm.doc.transaction_date;\n\n        if (transaction_date) {\n\n            let date = new Date(transaction_date);\n            \n            let month = date.getMonth() + 1;  \n            let year = date.getFullYear();\n            \n            let yearFormatted = year.toString().slice(-2);\n            \n            let monthFormatted = month < 10 ? '0' + month : month.toString();\n\n            frm.set_value('custom_id_month', monthFormatted);\n            frm.set_value('custom_id_year', yearFormatted);\n        }\n    }\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Sales Invoice",
+  "enabled": 0,
+  "modified": "2025-01-22 13:46:09.795235",
+  "module": "Baller Headwear",
+  "name": "Custom Naming Series (Sales Invoice)",
+  "script": "frappe.ui.form.on('Sales Invoice', {\n    before_save: function(frm) {\n\n        let posting_date = frm.doc.posting_date;\n\n        if (posting_date) {\n\n            let date = new Date(posting_date);\n            \n            let month = date.getMonth() + 1;  \n            let year = date.getFullYear();\n            \n            let yearFormatted = year.toString().slice(-2);\n            \n            let monthFormatted = month < 10 ? '0' + month : month.toString();\n\n            frm.set_value('custom_id_month', monthFormatted);\n            frm.set_value('custom_id_year', yearFormatted);\n        }\n    }\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Purchase Order",
+  "enabled": 0,
+  "modified": "2025-01-21 18:51:19.314806",
+  "module": "Baller Headwear",
+  "name": "Custom Naming Series (Purchase Order)",
+  "script": "frappe.ui.form.on('Purchase Order', {\n    before_save: function(frm) {\n\n        let transaction_date = frm.doc.transaction_date;\n\n        if (transaction_date) {\n\n            let date = new Date(transaction_date);\n            \n            let month = date.getMonth() + 1;  \n            let year = date.getFullYear();\n            \n            let yearFormatted = year.toString().slice(-2);\n            \n            \n            let monthFormatted = month < 10 ? '0' + month : month.toString();\n\n            frm.set_value('custom_id_month', monthFormatted);\n            frm.set_value('custom_id_year', yearFormatted);\n        }\n    }\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Quotation",
+  "enabled": 0,
+  "modified": "2025-01-22 13:46:00.080483",
+  "module": "Baller Headwear",
+  "name": "Custom Naming Series (Quotation)",
+  "script": "frappe.ui.form.on('Quotation', {\n    before_save: function(frm) {\n\n        let transaction_date = frm.doc.transaction_date;\n\n        if (transaction_date) {\n\n            let date = new Date(transaction_date);\n            \n            let month = date.getMonth() + 1;  \n            let year = date.getFullYear();\n            \n            let yearFormatted = year.toString().slice(-2);\n            \n            let monthFormatted = month < 10 ? '0' + month : month.toString();\n\n            frm.set_value('custom_id_month', monthFormatted);\n            frm.set_value('custom_id_year', yearFormatted);\n        }\n    }\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Payment Entry",
+  "enabled": 0,
+  "modified": "2025-01-22 13:45:55.565707",
+  "module": "Baller Headwear",
+  "name": "Custom Naming Series (Payment Entry)",
+  "script": "frappe.ui.form.on('Payment Entry', {\n    before_save: function(frm) {\n\n        let posting_date = frm.doc.posting_date;\n\n        if (posting_date) {\n\n            let date = new Date(posting_date);\n            \n            let month = date.getMonth() + 1;  \n            let year = date.getFullYear();\n            \n            let yearFormatted = year.toString().slice(-2);\n            \n            let monthFormatted = month < 10 ? '0' + month : month.toString();\n\n            frm.set_value('custom_id_month', monthFormatted);\n            frm.set_value('custom_id_year', yearFormatted);\n        }\n    }\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Journal Entry",
+  "enabled": 0,
+  "modified": "2025-01-22 13:45:51.214148",
+  "module": "Baller Headwear",
+  "name": "Custom Naming Series (Journal Entry)",
+  "script": "frappe.ui.form.on('Journal Entry', {\n    before_save: function(frm) {\n\n        let posting_date = frm.doc.posting_date;\n\n        if (posting_date) {\n\n            let date = new Date(posting_date);\n            \n            let month = date.getMonth() + 1;  \n            let year = date.getFullYear();\n            \n            let yearFormatted = year.toString().slice(-2);\n            \n            let monthFormatted = month < 10 ? '0' + month : month.toString();\n\n            frm.set_value('custom_id_month', monthFormatted);\n            frm.set_value('custom_id_year', yearFormatted);\n        }\n    }\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Purchase Invoice",
+  "enabled": 0,
+  "modified": "2025-01-22 13:46:05.020496",
+  "module": "Baller Headwear",
+  "name": "Custom Naming Series (Purchase Invoice)",
+  "script": "frappe.ui.form.on('Purchase Invoice', {\n    before_save: function(frm) {\n\n        let posting_date = frm.doc.posting_date;\n\n        if (posting_date) {\n\n            let date = new Date(posting_date);\n            \n            let month = date.getMonth() + 1;  \n            let year = date.getFullYear();\n            \n            let yearFormatted = year.toString().slice(-2);\n            \n            let monthFormatted = month < 10 ? '0' + month : month.toString();\n\n            frm.set_value('custom_id_month', monthFormatted);\n            frm.set_value('custom_id_year', yearFormatted);\n        }\n    }\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Sales Order",
   "enabled": 1,
-  "modified": "2025-02-21 18:02:45.581378",
+  "modified": "2025-03-04 12:09:05.594943",
   "module": "Baller Headwear",
   "name": "Default Naming Series (SO)",
-  "script": "frappe.ui.form.on('Sales Order', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'SAL-ORD-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-SO-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n// \t\tif (frm.doc.company != \"Baller Headwear Vietnam Ltd\"){\n// \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n\t\t    \n// \t\t}\n\t}\n})\n\n\n\n",
+  "script": "frappe.ui.form.on('Sales Order', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'SAL-ORD-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-SO-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n\t},\n// \tbefore_save:function(frm) {\n// \t    frappe.call({\n//             method: 'frappe.client.get_value',\n//             args: {\n//                 doctype: 'Company Settings',\n//                 fieldname: 'vietnam_company_name'\n//             },\n//             callback: function(response) {\n//                 if (response.message) {\n//                     var vietnam_company_name = response.message.vietnam_company_name;\n//             \t\tif (frm.doc.company != vietnam_company_name){\n//             \t\t    frm.set_value('naming_series', 'SAL-ORD-.YYYY.-');\n            \t\t    \n//             \t\t}\n//             \t\tif (frm.doc.company == vietnam_company_name){\n//             \t\t    frm.set_value('naming_series','.{custom_abbr}.-SO-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n//             \t\t}\n//                 }\n//             }\n//         });\n// \t}\n})\n\n\n\n",
   "view": "Form"
  },
  {
@@ -15,10 +92,10 @@
   "doctype": "Client Script",
   "dt": "Sales Invoice",
   "enabled": 1,
-  "modified": "2025-02-21 18:02:55.994406",
+  "modified": "2025-03-04 12:09:21.052512",
   "module": "Baller Headwear",
   "name": "Default Naming Series (Sales Invoice)",
-  "script": "frappe.ui.form.on('Sales Invoice', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series', '.{custom_abbr}.-SI-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n// \t\tif (frm.doc.company != \"Baller Headwear Vietnam Ltd\"){\n// \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n\t\t    \n// \t\t}\n\t}\n})\n\n",
+  "script": "frappe.ui.form.on('Sales Invoice', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series', '.{custom_abbr}.-SI-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n\t},\n// \tbefore_save:function(frm) {\n// \t    frappe.call({\n//             method: 'frappe.client.get_value',\n//             args: {\n//                 doctype: 'Company Settings',\n//                 fieldname: 'vietnam_company_name'\n//             },\n//             callback: function(response) {\n//                 if (response.message) {\n//                     var vietnam_company_name = response.message.vietnam_company_name;\n//             \t\tif (frm.doc.company != vietnam_company_name){\n//             \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n            \t\t    \n//             \t\t}\n//             \t\tif (frm.doc.company == vietnam_company_name){\n//             \t\t    frm.set_value('naming_series', '.{custom_abbr}.-SI-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n//             \t\t}\n//                 }\n//             }\n//         });\n// \t}\n})\n\n",
   "view": "Form"
  },
  {
@@ -26,10 +103,10 @@
   "doctype": "Client Script",
   "dt": "Purchase Order",
   "enabled": 1,
-  "modified": "2025-02-21 18:02:33.649076",
+  "modified": "2025-03-04 12:08:48.618481",
   "module": "Baller Headwear",
   "name": "Default Naming Series (Purchase Order)",
-  "script": "frappe.ui.form.on('Purchase Order', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'PUR-ORD-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-PO-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n// \t\tif (frm.doc.company != \"Baller Headwear Vietnam Ltd\"){\n// \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n\t\t    \n// \t\t}\n\t}\n})\n\n\n\n",
+  "script": "frappe.ui.form.on('Purchase Order', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'PUR-ORD-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-PO-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n\n\t},\n// \tbefore_save:function(frm) {\n// \t    frappe.call({\n//             method: 'frappe.client.get_value',\n//             args: {\n//                 doctype: 'Company Settings',\n//                 fieldname: 'vietnam_company_name'\n//             },\n//             callback: function(response) {\n//                 if (response.message) {\n//                     var vietnam_company_name = response.message.vietnam_company_name;\n//             \t\tif (frm.doc.company != vietnam_company_name){\n//             \t\t    frm.set_value('naming_series', 'PUR-ORD-.YYYY.-');\n            \t\t    \n//             \t\t}\n//             \t\tif (frm.doc.company == vietnam_company_name){\n//             \t\t    frm.set_value('naming_series','.{custom_abbr}.-PO-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n//             \t\t}\n//                 }\n//             }\n//         });\n\n// \t}\n})\n\n\n\n",
   "view": "Form"
  },
  {
@@ -37,10 +114,10 @@
   "doctype": "Client Script",
   "dt": "Purchase Invoice",
   "enabled": 1,
-  "modified": "2025-02-21 18:02:21.877199",
+  "modified": "2025-03-04 12:08:01.016641",
   "module": "Baller Headwear",
   "name": "Default Naming Series (Purchase Invoice)",
-  "script": "frappe.ui.form.on('Purchase Invoice', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'ACC-PINV-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-PI-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n// \t\tif (frm.doc.company != \"Baller Headwear Vietnam Ltd\"){\n// \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n\t\t    \n// \t\t}\n\t}\n})\n\n\n\n",
+  "script": "frappe.ui.form.on('Purchase Invoice', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'ACC-PINV-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-PI-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n\t},\n// \tbefore_save:function(frm) {\n// \t    frappe.call({\n//             method: 'frappe.client.get_value',\n//             args: {\n//                 doctype: 'Company Settings',\n//                 fieldname: 'vietnam_company_name'\n//             },\n//             callback: function(response) {\n//                 if (response.message) {\n//                     var vietnam_company_name = response.message.vietnam_company_name;\n//             \t\tif (frm.doc.company != vietnam_company_name){\n//             \t\t    frm.set_value('naming_series', 'ACC-PINV-.YYYY.-');\n            \t\t    \n//             \t\t}\n//             \t\tif (frm.doc.company == vietnam_company_name){\n//             \t\t    frm.set_value('naming_series','.{custom_abbr}.-PI-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n//             \t\t}\n//                 }\n//             }\n//         });\n// \t}\n})\n\n\n\n",
   "view": "Form"
  },
  {
@@ -48,10 +125,10 @@
   "doctype": "Client Script",
   "dt": "Quotation",
   "enabled": 1,
-  "modified": "2025-02-21 18:02:07.049277",
+  "modified": "2025-03-04 12:07:45.824773",
   "module": "Baller Headwear",
   "name": "Default Naming Series (Quotation)",
-  "script": "frappe.ui.form.on('Quotation', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'SAL-QTN-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-SQ-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n// \t\tif (frm.doc.company != \"Baller Headwear Vietnam Ltd\"){\n// \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n\t\t    \n// \t\t}\n\t}\n})\n\n\n\n",
+  "script": "frappe.ui.form.on('Quotation', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'SAL-QTN-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-SQ-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n\n\t},\n// \tbefore_save:function(frm) {\n// \t    frappe.call({\n//             method: 'frappe.client.get_value',\n//             args: {\n//                 doctype: 'Company Settings',\n//                 fieldname: 'vietnam_company_name'\n//             },\n//             callback: function(response) {\n//                 if (response.message) {\n//                     var vietnam_company_name = response.message.vietnam_company_name;\n//             \t\tif (frm.doc.company != vietnam_company_name){\n//             \t\t    frm.set_value('naming_series', 'SAL-QTN-.YYYY.-');\n            \t\t    \n//             \t\t}\n//             \t\tif (frm.doc.company == vietnam_company_name){\n//             \t\t    frm.set_value('naming_series','.{custom_abbr}.-SQ-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n//             \t\t}\n//                 }\n//             }\n//         });\n\n// \t}\n})\n\n\n\n",
   "view": "Form"
  },
  {
@@ -59,10 +136,10 @@
   "doctype": "Client Script",
   "dt": "Payment Entry",
   "enabled": 1,
-  "modified": "2025-02-21 18:01:56.101669",
+  "modified": "2025-03-11 11:47:43.976862",
   "module": "Baller Headwear",
   "name": "Default Naming Series (Payment Entry)",
-  "script": "frappe.ui.form.on('Payment Entry', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'ACC-PAY-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-PAY-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n// \t\tif (frm.doc.company != \"Baller Headwear Vietnam Ltd\"){\n// \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n\t\t    \n// \t\t}\n\t}\n})\n\n\n\n",
+  "script": "frappe.ui.form.on('Payment Entry', {\r\n    company: function(frm) {\r\n        frappe.call({\r\n            method: 'frappe.client.get_value',\r\n            args: {\r\n                doctype: 'Company Settings',\r\n                fieldname: 'vietnam_company_name'\r\n            },\r\n            callback: function(response) {\r\n                if (response.message) {\r\n                    var vietnam_company_name = response.message.vietnam_company_name;\r\n                    if (frm.doc.company != vietnam_company_name) {\r\n                        frm.set_value('naming_series', 'ACC-PAY-.YYYY.-');\r\n                    }\r\n                    if (frm.doc.company == vietnam_company_name) {\r\n                        frm.set_value('naming_series', '.{custom_abbr}.-PAY-.{custom_id_year}.-.{custom_id_month}.-.####');\r\n                    }\r\n                }\r\n            }\r\n        });\r\n    },\r\n    // onload_post_render: function(frm) {\r\n    //     if (frm.doc.docstatus != 1 && frm.doc.docstatus != 0) {\r\n    //         frappe.call({\r\n    //             method: 'frappe.client.get_value',\r\n    //             args: {\r\n    //                 doctype: 'Company Settings',\r\n    //                 fieldname: 'vietnam_company_name'\r\n    //             },\r\n    //             callback: function(response) {\r\n    //                 if (response.message) {\r\n    //                     var vietnam_company_name = response.message.vietnam_company_name;\r\n    //                     if (frm.doc.company != vietnam_company_name) {\r\n    //                         frm.set_value('naming_series', 'ACC-PAY-.YYYY.-');\r\n    //                     }\r\n    //                     if (frm.doc.company == vietnam_company_name) {\r\n    //                         frm.set_value('naming_series', '.{custom_abbr}.-PAY-.{custom_id_year}.-.{custom_id_month}.-.####');\r\n    //                     }\r\n    //                 }\r\n    //             }\r\n    //         });\r\n    //     }\r\n    // },\r\n\r\n});\r\n",
   "view": "Form"
  },
  {
@@ -70,10 +147,10 @@
   "doctype": "Client Script",
   "dt": "Journal Entry",
   "enabled": 1,
-  "modified": "2025-02-21 18:01:15.247782",
+  "modified": "2025-03-18 19:22:04.488112",
   "module": "Baller Headwear",
   "name": "Default Naming Series (Journal Entry)",
-  "script": "frappe.ui.form.on('Journal Entry', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'ACC-JV-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-JV-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n// \t\tif (frm.doc.company != \"Baller Headwear Vietnam Ltd\"){\n// \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n\t\t    \n// \t\t}\n\t}\n})",
+  "script": "frappe.ui.form.on('Journal Entry', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'ACC-JV-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-JV-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n\t},\n// \tbefore_save:function(frm) {\n// \t    frappe.call({\n//             method: 'frappe.client.get_value',\n//             args: {\n//                 doctype: 'Company Settings',\n//                 fieldname: 'vietnam_company_name'\n//             },\n//             callback: function(response) {\n//                 if (response.message) {\n//                     var vietnam_company_name = response.message.vietnam_company_name;\n//             \t\tif (frm.doc.company != vietnam_company_name){\n//             \t\t    frm.set_value('naming_series', 'ACC-JV-.YYYY.-');\n            \t\t    \n//             \t\t}\n//             \t\tif (frm.doc.company == vietnam_company_name){\n//             \t\t    frm.set_value('naming_series','.{custom_abbr}.-JV-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n//             \t\t}\n//                 }\n//             }\n//         });\n// \t},\n})",
   "view": "Form"
  },
  {
@@ -81,10 +158,10 @@
   "doctype": "Client Script",
   "dt": "Work Order",
   "enabled": 1,
-  "modified": "2025-02-21 18:01:03.893503",
+  "modified": "2025-03-04 12:06:56.118940",
   "module": "Baller Headwear",
   "name": "Default Naming Series (Work Order)",
-  "script": "frappe.ui.form.on('Work Order', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'MFG-WO-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-WO-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n// \t\tif (frm.doc.company != \"Baller Headwear Vietnam Ltd\"){\n// \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n\t\t    \n// \t\t}\n\t}\n})",
+  "script": "frappe.ui.form.on('Work Order', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'MFG-WO-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-WO-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n\t},\n// \tbefore_save:function(frm) {\n// \t    frappe.call({\n//             method: 'frappe.client.get_value',\n//             args: {\n//                 doctype: 'Company Settings',\n//                 fieldname: 'vietnam_company_name'\n//             },\n//             callback: function(response) {\n//                 if (response.message) {\n//                     var vietnam_company_name = response.message.vietnam_company_name;\n//             \t\tif (frm.doc.company != vietnam_company_name){\n//             \t\t    frm.set_value('naming_series', 'MFG-WO-.YYYY.-');\n            \t\t    \n//             \t\t}\n//             \t\tif (frm.doc.company == vietnam_company_name){\n//             \t\t    frm.set_value('naming_series','.{custom_abbr}.-WO-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n//             \t\t}\n//                 }\n//             }\n//         });\n// \t},\n})",
   "view": "Form"
  },
  {
@@ -92,10 +169,10 @@
   "doctype": "Client Script",
   "dt": "Purchase Receipt",
   "enabled": 1,
-  "modified": "2025-02-21 18:00:53.790515",
+  "modified": "2025-03-04 12:06:33.631709",
   "module": "Baller Headwear",
   "name": "Default Naming Series (Purchase Receipt)",
-  "script": "frappe.ui.form.on('Purchase Receipt', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'MAT-PRE-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-PR-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n// \t\tif (frm.doc.company != \"Baller Headwear Vietnam Ltd\"){\n// \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n\t\t    \n// \t\t}\n\t}\n})",
+  "script": "frappe.ui.form.on('Purchase Receipt', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'MAT-PRE-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-PR-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n\t},\n// \tbefore_save:function(frm) {\n// \t    frappe.call({\n//             method: 'frappe.client.get_value',\n//             args: {\n//                 doctype: 'Company Settings',\n//                 fieldname: 'vietnam_company_name'\n//             },\n//             callback: function(response) {\n//                 if (response.message) {\n//                     var vietnam_company_name = response.message.vietnam_company_name;\n//             \t\tif (frm.doc.company != vietnam_company_name){\n//             \t\t    frm.set_value('naming_series', 'MAT-PRE-.YYYY.-');\n            \t\t    \n//             \t\t}\n//             \t\tif (frm.doc.company == vietnam_company_name){\n//             \t\t    frm.set_value('naming_series','.{custom_abbr}.-PR-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n//             \t\t}\n//                 }\n//             }\n//         });\n// \t},\n})",
   "view": "Form"
  },
  {
@@ -103,10 +180,10 @@
   "doctype": "Client Script",
   "dt": "Material Request",
   "enabled": 1,
-  "modified": "2025-02-21 18:00:43.509947",
+  "modified": "2025-03-04 12:06:08.992750",
   "module": "Baller Headwear",
   "name": "Default Naming Series (Material Request)",
-  "script": "frappe.ui.form.on('Material Request', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'MAT-MR-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-MR-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n// \t\tif (frm.doc.company != \"Baller Headwear Vietnam Ltd\"){\n// \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n\t\t    \n// \t\t}\n\t}\n})",
+  "script": "frappe.ui.form.on('Material Request', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'MAT-MR-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-MR-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n\n\t},\n// \tbefore_save:function(frm) {\n// \t    frappe.call({\n//             method: 'frappe.client.get_value',\n//             args: {\n//                 doctype: 'Company Settings',\n//                 fieldname: 'vietnam_company_name'\n//             },\n//             callback: function(response) {\n//                 if (response.message) {\n//                     var vietnam_company_name = response.message.vietnam_company_name;\n//             \t\tif (frm.doc.company != vietnam_company_name){\n//             \t\t    frm.set_value('naming_series', 'MAT-MR-.YYYY.-');\n            \t\t    \n//             \t\t}\n//             \t\tif (frm.doc.company == vietnam_company_name){\n//             \t\t    frm.set_value('naming_series','.{custom_abbr}.-MR-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n//             \t\t}\n//                 }\n//             }\n//         });\n\n// \t}\n})",
   "view": "Form"
  },
  {
@@ -114,10 +191,10 @@
   "doctype": "Client Script",
   "dt": "Production Plan",
   "enabled": 1,
-  "modified": "2025-02-21 18:00:34.520994",
+  "modified": "2025-03-04 12:05:43.777405",
   "module": "Baller Headwear",
   "name": "Default Naming Series (Production Plan)",
-  "script": "frappe.ui.form.on('Production Plan', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'MFG-PP-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-PP-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n// \t\tif (frm.doc.company != \"Baller Headwear Vietnam Ltd\"){\n// \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n\t\t    \n// \t\t}\n\t}\n})",
+  "script": "frappe.ui.form.on('Production Plan', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'MFG-PP-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-PP-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n\t},\n\n})",
   "view": "Form"
  },
  {
@@ -169,10 +246,32 @@
   "doctype": "Client Script",
   "dt": "Stock Entry",
   "enabled": 1,
-  "modified": "2025-02-21 18:00:24.546497",
+  "modified": "2025-03-04 12:05:21.721048",
   "module": "Baller Headwear",
   "name": "Default Naming Series (Stock Entry)",
-  "script": "frappe.ui.form.on('Stock Entry', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'MAT-STE-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-SE-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n// \t\tif (frm.doc.company != \"Baller Headwear Vietnam Ltd\"){\n// \t\t    frm.set_value('naming_series', 'ACC-SINV-.YYYY.-');\n\t\t    \n// \t\t}\n\t}\n})",
+  "script": "frappe.ui.form.on('Stock Entry', {\n\tcompany:function(frm) {\n\t    frappe.call({\n            method: 'frappe.client.get_value',\n            args: {\n                doctype: 'Company Settings',\n                fieldname: 'vietnam_company_name'\n            },\n            callback: function(response) {\n                if (response.message) {\n                    var vietnam_company_name = response.message.vietnam_company_name;\n            \t\tif (frm.doc.company != vietnam_company_name){\n            \t\t    frm.set_value('naming_series', 'MAT-STE-.YYYY.-');\n            \t\t    \n            \t\t}\n            \t\tif (frm.doc.company == vietnam_company_name){\n            \t\t    frm.set_value('naming_series','.{custom_abbr}.-SE-.{custom_id_year}.-.{custom_id_month}.-.####');\n            \t\t    \n            \t\t}\n                }\n            }\n        });\n\n\t},\n\n})",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Work Order",
+  "enabled": 0,
+  "modified": "2025-02-24 12:23:41.442644",
+  "module": null,
+  "name": "WO SCRIPT",
+  "script": "\n})frappe.ui.form.on(\"Work Order\", {\n    before_save: function(frm) {\n        let extra_qty = 0; // Số lượng NVL cộng thêm\n\n        if (frm.doc.qty < 1000) {\n            extra_qty = 5; // Nếu sản xuất < 1000 mũ, cộng NVL của 5 mũ\n        } else {\n            extra_qty = 10; // Nếu sản xuất ≥ 1000 mũ, cộng NVL của 10 mũ\n        }\n\n        frm.doc.required_items.forEach(item => {\n            let extra_material = (item.required_qty / frm.doc.qty) * extra_qty;\n            item.required_qty += extra_material;\n        });\n    }\n});\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Packing Slip",
+  "enabled": 1,
+  "modified": "2025-03-11 17:22:14.542255",
+  "module": "Baller Headwear",
+  "name": "Packing list Customization",
+  "script": "frappe.ui.form.on('Packing Slip', {\n    before_save: function(frm) {\n        total_gw_calc(frm);\n    },\n    delivery_note: function(frm) {\n        if (frm.doc.delivery_note) {\n            frappe.call({\n                method: 'frappe.client.get',\n                args: {\n                    doctype: 'Delivery Note',\n                    name: frm.doc.delivery_note\n                },\n                callback: function(response) {\n                    if (response.message) {\n                        var delivery_note_doc = response.message;\n                        \n                        if (delivery_note_doc.items && delivery_note_doc.items.length > 0) {\n                            var first_item = delivery_note_doc.items[0];\n\n                            if (first_item.against_sales_invoice) {\n                                frm.set_value('custom_sales_invoice_id', first_item.against_sales_invoice);\n                            } else {\n                                frappe.msgprint(__('No Sales Invoice found for this Delivery Note'));\n                            }\n                        } else {\n                            frappe.msgprint(__('No items found in this Delivery Note'));\n                        }\n                    }\n                }\n            });\n        } else {\n            frm.set_value('custom_sales_invoice_id', '');\n        }\n    }\n})\n\nfrappe.ui.form.on('Packing Slip Item', {\n    custom_quantity_of_cartons: function(frm, cdt, cdn) {\n        calculateTotal(frm, cdt, cdn);\n        calculatetotal_gw(frm, cdt, cdn);\n    },\n    custom_nwkgctn: function(frm, cdt, cdn) {\n        calculateTotal(frm, cdt, cdn);\n    },\n    custom_total_net_weight: function(frm, cdt, cdn) {\n        calculate_per_item_net_weight(frm, cdt, cdn);\n    },\n    custom_gwkgctn: function(frm, cdt, cdn) {\n        calculatetotal_gw(frm, cdt, cdn);\n    },\n\n});\n\nfunction calculateTotal(frm, cdt, cdn) {\n    var child_doc = locals[cdt][cdn];\n    var total_net_weight = 0;\n    if (child_doc.custom_quantity_of_cartons) {\n        total_net_weight = child_doc.custom_quantity_of_cartons * child_doc.custom_nwkgctn ;\n    }\n    if (child_doc.custom_nwkgctn) {\n        total_net_weight = child_doc.custom_nwkgctn * child_doc.custom_quantity_of_cartons ;\n    }\n    frappe.model.set_value(cdt, cdn, 'custom_total_net_weight', total_net_weight);\n}\n\nfunction calculatetotal_gw(frm, cdt, cdn) {\n    var child_doc = locals[cdt][cdn];\n    var total_net_weight = 0;\n    if (child_doc.custom_quantity_of_cartons) {\n        total_net_weight = child_doc.custom_quantity_of_cartons * child_doc.custom_gwkgctn ;\n    }\n    if (child_doc.custom_gwkgctn) {\n        total_net_weight = child_doc.custom_gwkgctn * child_doc.custom_quantity_of_cartons ;\n    }\n    frappe.model.set_value(cdt, cdn, 'custom_total_gross_weight', total_net_weight);\n}\n\nfunction calculate_per_item_net_weight(frm, cdt, cdn, total_net_weight) {\n    var child_doc = locals[cdt][cdn];\n    var per_item_net_weight = 0;\n    \n    if (child_doc.custom_total_net_weight > 0 && child_doc.qty > 0) {\n        per_item_net_weight = child_doc.custom_total_net_weight / child_doc.qty;\n    } else {\n        per_item_net_weight = 0;\n    }\n\n    frappe.model.set_value(cdt, cdn, 'net_weight', per_item_net_weight);\n}\n\nfunction total_gw_calc(frm) {\n    var total_gross_weight = 0;\n    \n    frm.doc.items.forEach(row => {\n        total_gross_weight += row.custom_total_gross_weight;\n    }); \n \n\n    frm.set_value('gross_weight_pkg', total_gross_weight);\n}\n\n\n",
   "view": "Form"
  }
 ]

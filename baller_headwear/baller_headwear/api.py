@@ -1,7 +1,7 @@
 import json
 import frappe
 from frappe import _, msgprint
-from datetime import datetime
+from datetime import datetime, date 
 from frappe.model.mapper import get_mapped_doc
 from frappe.query_builder.functions import Sum
 from frappe.utils import cint, cstr, flt, get_link_to_form, getdate, new_line_sep, nowdate
@@ -157,3 +157,60 @@ def set_custom_id_fields_for_work_order(doc, method):
 
         doc.custom_id_month = month_formatted
         doc.custom_id_year = year_formatted
+
+
+@frappe.whitelist()
+def set_custom_id_fields_for_posting_date_jv(doc, method):
+    company_settings = frappe.get_doc("Company Settings")
+    if doc.posting_date:
+        if isinstance(doc.posting_date, str):
+            posting_date = datetime.strptime(doc.posting_date, '%Y-%m-%d').date()
+        elif isinstance(doc.posting_date, datetime):  
+            posting_date = doc.posting_date.date()
+        elif isinstance(doc.posting_date, date):
+            posting_date = doc.posting_date
+        else:
+            raise ValueError("Posting date is neither a string nor a datetime.date object.")
+
+        posting_date = datetime.combine(posting_date, datetime.min.time())
+
+        month = posting_date.month
+        year = posting_date.year
+
+        year_formatted = str(year)[-2:]  
+        month_formatted = f"{month:02d}" 
+
+        doc.custom_id_month = month_formatted
+        doc.custom_id_year = year_formatted
+        
+        if doc.naming_series == "ACC-JV-2024-":
+            doc.naming_series = "ACC-JV-2024-" 
+        elif doc.company == company_settings.vietnam_company_name:
+            doc.naming_series = ".{custom_abbr}.-JV-.{custom_id_year}.-.{custom_id_month}.-.####"
+        else:
+            doc.naming_series = "ACC-JV-.YYYY.-"
+            
+@frappe.whitelist()
+def set_custom_id_fields_for_posting_date_payment_entry(doc, method):
+    company_settings = frappe.get_doc("Company Settings")
+    if doc.posting_date:
+
+        posting_date = datetime.strptime(doc.posting_date, '%Y-%m-%d')
+
+        month = posting_date.month
+        year = posting_date.year
+        
+
+        year_formatted = str(year)[-2:]  
+        month_formatted = f"{month:02d}" 
+        
+
+        doc.custom_id_month = month_formatted
+        doc.custom_id_year = year_formatted
+
+        if doc.naming_series == "ACC-PAY-2024-":
+            doc.naming_series = "ACC-PAY-2024-" 
+        elif doc.company == company_settings.vietnam_company_name:
+            doc.naming_series = ".{custom_abbr}.-PAY-.{custom_id_year}.-.{custom_id_month}.-.####"
+        else:
+            doc.naming_series = "ACC-PAY-.YYYY.-"
