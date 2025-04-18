@@ -214,3 +214,50 @@ def set_custom_id_fields_for_posting_date_payment_entry(doc, method):
             doc.naming_series = ".{custom_abbr}.-PAY-.{custom_id_year}.-.{custom_id_month}.-.####"
         else:
             doc.naming_series = "ACC-PAY-.YYYY.-"
+
+@frappe.whitelist()
+def set_custom_id_fields_for_asset(doc, method):
+    company_settings = frappe.get_doc("Company Settings")
+
+    if doc.purchase_date:
+
+        purchase_date = datetime.strptime(doc.purchase_date, '%Y-%m-%d')
+
+        month = purchase_date.month
+        year = purchase_date.year
+        
+
+        year_formatted = str(year)[-2:]  
+        month_formatted = f"{month:02d}" 
+        
+
+        doc.custom_id_month = month_formatted
+        doc.custom_id_year = year_formatted
+
+        if doc.naming_series == "ACC-ASS-2024-":
+            doc.naming_series = "ACC-ASS-2024-" 
+        elif doc.company == company_settings.vietnam_company_name:
+            doc.naming_series = ".{custom_abbr}.-ASS-.{custom_id_year}.-.{custom_id_month}.-.####"
+        else:
+            doc.naming_series = "ACC-ASS-.YYYY.-"
+
+@frappe.whitelist()
+def set_custom_id_fields_for_stock_entry(doc, method):
+
+    if doc.posting_date:
+        if isinstance(doc.posting_date, str):
+            posting_date = datetime.strptime(doc.posting_date, '%Y-%m-%d')
+        else:
+            posting_date = doc.posting_date
+
+
+        month = posting_date.month
+        year = posting_date.year
+        
+
+        year_formatted = str(year)[-2:]  
+        month_formatted = f"{month:02d}" 
+        
+
+        doc.custom_id_month = month_formatted
+        doc.custom_id_year = year_formatted

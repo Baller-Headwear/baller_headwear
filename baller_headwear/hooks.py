@@ -5,6 +5,10 @@ app_description = "Manan Shah"
 app_email = "manan@unifyxperts.com"
 app_license = "MIT"
 
+import erpnext.controllers.accounts_controller as original_controller
+import baller_headwear.baller_headwear.exchange_gain_loss as custom_controller
+
+original_controller.AccountsController  = custom_controller.AccountsController
 # Includes in <head>
 # ------------------
 
@@ -151,7 +155,10 @@ doc_events = {
         "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
     },
     "Stock Entry": {
-        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_stock_entry"
+    },
+    "Asset": {
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_asset"
     }
 }
 
