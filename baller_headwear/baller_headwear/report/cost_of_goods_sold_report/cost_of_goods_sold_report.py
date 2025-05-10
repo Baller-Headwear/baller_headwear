@@ -8,24 +8,7 @@ def execute(filters=None):
     if not filters.get("from_date") or not filters.get("to_date") or not filters.get("company"):
         frappe.throw("Please select From Date, To Date, and Company.")
 
-	
     cost_accounts = get_cost_accounts()
-
-    # Define cost accounts
-    # cost_accounts = {
-    #     "direct_material": ["6211 - Direct raw material costs - BHV", "6218 - Stock Adjustment - BHV",
-    #                         "6219 - Control - BHV", "621901 - Chargeable - BHV", "621902 - Asset Chargeable - BHV"],
-    #     "machinery_depreciation": ["6274 - Fixed asset depreciation - BHV"],
-    #     "production_tool_cost": ["6273 - Tools and instruments - BHV"],
-    #     "material_cost": ["6272 - Material costs - BHV"],
-    #     "factory_staff_cost": ["6271 - Factory staff costs - BHV"],
-    #     "other_costs": ["6278 - Other expenses - BHV", "6279 - Cost control - BHV"],
-    #     "labour_cost": ["6221 - Direct labour costs - salary - BHV", "6222 - Direct labour costs - bonus - BHV"],
-    #     "factory_rental_cost": ["62771 - Cost of electricity and water for production - BHV", "62773 - Factory rental costs - BHV",
-    #                              "62774 - Repair and maintenance costs - BHV", "62776 - Cost of outsourcing embroidery - BHV",
-    #                              "62777 - Outsourcing printing costs - BHV", "62778 - Expenses for other services purchased from outside - BHV"],
-    #     "custom_and_shipping": ["62772 - Documentation fees, customs services... imported goods - BHV", "62775 - Shipping costs - BHV"]
-    # }
 
     # Get total cost per category
     total_costs = {key: get_total_cost(accounts, filters) for key, accounts in cost_accounts.items()}
@@ -90,22 +73,52 @@ def execute(filters=None):
 
 
 def get_total_cost(accounts, filters):
-    return frappe.db.sql("""
+    """Fetch total cost including child accounts and applying cost center filter if selected."""
+    cost_center_condition = ""
+    params = {
+        "company": filters["company"],
+        "from_date": filters["from_date"],
+        "to_date": filters["to_date"]
+    }
+
+    # Fetch child accounts for the selected parent accounts
+    expanded_accounts = get_child_accounts(accounts)
+    params["accounts"] = tuple(expanded_accounts)
+
+    # Apply cost center filter only if it's selected
+    if filters.get("cost_center"):
+        cost_center_condition = "AND cost_center = %(cost_center)s"
+        params["cost_center"] = filters["cost_center"]
+
+    return frappe.db.sql(f"""
         SELECT COALESCE(SUM(debit_in_account_currency), 0)
         FROM `tabGL Entry`
         WHERE account IN %(accounts)s
         AND company = %(company)s
         AND posting_date BETWEEN %(from_date)s AND %(to_date)s
-    """, {
-        "accounts": tuple(accounts),
-        "company": filters["company"],
-        "from_date": filters["from_date"],
-        "to_date": filters["to_date"]
-    }, as_list=True)[0][0] or 0
+        {cost_center_condition}
+    """, params, as_list=True)[0][0] or 0
+
+
+def get_child_accounts(accounts):
+    """Fetch all child accounts for the given list of accounts."""
+    expanded_accounts = list(accounts)  # Start with given accounts
+
+    for account in accounts:
+        child_accounts = frappe.db.sql("""
+            SELECT name FROM `tabAccount`
+            WHERE parent_account = %s
+        """, (account,), as_list=True)
+
+        for child in child_accounts:
+            expanded_accounts.append(child[0])
+            expanded_accounts.extend(get_child_accounts([child[0]]))  # Recursively fetch deeper children
+
+    return expanded_accounts
 
 
 def get_cost_accounts():
-    """Fetch accounts dynamically from Cogs Settings child tables"""
+    """Fetch accounts dynamically from Cogs Settings child tables."""
     cogs_settings_doc = frappe.get_doc("Cogs Settings")
 
     cost_accounts = {}
@@ -138,4 +151,3 @@ def get_cost_accounts():
         cost_accounts.setdefault("custom_and_shipping", []).append(child.account_name)
 
     return cost_accounts
-

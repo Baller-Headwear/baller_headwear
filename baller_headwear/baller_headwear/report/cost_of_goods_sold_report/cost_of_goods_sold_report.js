@@ -1,6 +1,3 @@
-// Copyright (c) 2025, manan@unifyxperts.com and contributors
-// For license information, please see license.txt
-
 frappe.query_reports["Cost of Goods Sold Report"] = {
     "filters": [
         {
@@ -21,18 +18,33 @@ frappe.query_reports["Cost of Goods Sold Report"] = {
             "fieldtype": "Link",
             "options": "Company",
             "reqd": 1
+        },
+        {
+            "fieldname": "cost_center",
+            "label": __("Cost Center"),
+            "fieldtype": "Link",
+            "options": "Cost Center",
+            "reqd": 0,
+            "get_query": function () {
+                let company = frappe.query_report.get_filter_value("company");
+                if (company) {
+                    return {
+                        filters: { company: company }
+                    };
+                }
+            }
         }
     ],
 
     onload: function (report) {
-        report.page.add_inner_button(__("Refresh Report"), function () {
-            let filters = frappe.query_report.get_filter_values();
+        // Add Reset Button
+        report.page.add_inner_button(__("Reset"), function () {
+            // Clear all filter values
+            frappe.query_report.filters.forEach(filter => {
+                frappe.query_report.set_filter_value(filter.df.fieldname, null);
+            });
 
-            if (!filters.from_date || !filters.to_date || !filters.company) {
-                frappe.msgprint(__("Please select From Date, To Date, and Company before running the report."));
-                return;
-            }
-
+            // Refresh report after clearing filters
             frappe.query_report.refresh();
         });
     }
