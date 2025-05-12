@@ -8,7 +8,7 @@ app_license = "MIT"
 import erpnext.controllers.accounts_controller as original_controller
 import baller_headwear.baller_headwear.exchange_gain_loss as custom_controller
 
-original_controller.AccountsController  = custom_controller.AccountsController
+# original_controller.AccountsController  = custom_controller.AccountsController
 # Includes in <head>
 # ------------------
 
