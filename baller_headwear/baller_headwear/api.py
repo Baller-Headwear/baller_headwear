@@ -101,30 +101,68 @@ def make_stock_entry(source_name, target_doc=None):
 
 	return doclist
 
+# @frappe.whitelist()
+# def set_custom_id_fields_for_transaction_date(doc, method):
+
+#     if doc.transaction_date:
+
+#         transaction_date = datetime.strptime(doc.transaction_date, '%Y-%m-%d')
+
+#         month = transaction_date.month
+#         year = transaction_date.year
+        
+
+#         year_formatted = str(year)[-2:]  
+#         month_formatted = f"{month:02d}" 
+        
+
+#         doc.custom_id_month = month_formatted
+#         doc.custom_id_year = year_formatted
+
 @frappe.whitelist()
 def set_custom_id_fields_for_transaction_date(doc, method):
-
     if doc.transaction_date:
-
-        transaction_date = datetime.strptime(doc.transaction_date, '%Y-%m-%d')
+        if isinstance(doc.transaction_date, str):
+            transaction_date = datetime.strptime(doc.transaction_date, '%Y-%m-%d')
+        else:
+            transaction_date = doc.transaction_date
 
         month = transaction_date.month
         year = transaction_date.year
-        
 
         year_formatted = str(year)[-2:]  
         month_formatted = f"{month:02d}" 
-        
 
         doc.custom_id_month = month_formatted
         doc.custom_id_year = year_formatted
+
+# @frappe.whitelist()
+# def set_custom_id_fields_for_posting_date(doc, method):
+
+#     if doc.posting_date:
+
+#         posting_date = datetime.strptime(doc.posting_date, '%Y-%m-%d')
+
+#         month = posting_date.month
+#         year = posting_date.year
+        
+
+#         year_formatted = str(year)[-2:]  
+#         month_formatted = f"{month:02d}" 
+        
+
+#         doc.custom_id_month = month_formatted
+#         doc.custom_id_year = year_formatted
 
 @frappe.whitelist()
 def set_custom_id_fields_for_posting_date(doc, method):
 
     if doc.posting_date:
+        if isinstance(doc.posting_date, str):
+            posting_date = datetime.strptime(doc.posting_date, '%Y-%m-%d')
+        else:
+            posting_date = doc.posting_date
 
-        posting_date = datetime.strptime(doc.posting_date, '%Y-%m-%d')
 
         month = posting_date.month
         year = posting_date.year
@@ -241,23 +279,3 @@ def set_custom_id_fields_for_asset(doc, method):
         else:
             doc.naming_series = "ACC-ASS-.YYYY.-"
 
-@frappe.whitelist()
-def set_custom_id_fields_for_stock_entry(doc, method):
-
-    if doc.posting_date:
-        if isinstance(doc.posting_date, str):
-            posting_date = datetime.strptime(doc.posting_date, '%Y-%m-%d')
-        else:
-            posting_date = doc.posting_date
-
-
-        month = posting_date.month
-        year = posting_date.year
-        
-
-        year_formatted = str(year)[-2:]  
-        month_formatted = f"{month:02d}" 
-        
-
-        doc.custom_id_month = month_formatted
-        doc.custom_id_year = year_formatted
