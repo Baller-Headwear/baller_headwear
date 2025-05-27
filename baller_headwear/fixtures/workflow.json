@@ -34,6 +34,7 @@
     "parent": "Material Request",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Draft",
     "update_field": null,
     "update_value": null,
@@ -49,6 +50,7 @@
     "parent": "Material Request",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approval Pending",
     "update_field": null,
     "update_value": null,
@@ -64,6 +66,7 @@
     "parent": "Material Request",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approved By Team Leader",
     "update_field": null,
     "update_value": null,
@@ -79,6 +82,7 @@
     "parent": "Material Request",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Rejected By Team Leader",
     "update_field": null,
     "update_value": null,
@@ -94,6 +98,7 @@
     "parent": "Material Request",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approved By Team Leader (Not Regular)",
     "update_field": null,
     "update_value": null,
@@ -109,6 +114,7 @@
     "parent": "Material Request",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approved By BOD",
     "update_field": null,
     "update_value": null,
@@ -124,6 +130,7 @@
     "parent": "Material Request",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Rejected By BOD",
     "update_field": null,
     "update_value": null,
@@ -140,6 +147,7 @@
     "parent": "Material Request",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Draft",
     "workflow_builder_id": null
    },
@@ -152,6 +160,7 @@
     "parent": "Material Request",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approval Pending",
     "workflow_builder_id": null
    },
@@ -164,6 +173,7 @@
     "parent": "Material Request",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approval Pending",
     "workflow_builder_id": null
    },
@@ -176,6 +186,7 @@
     "parent": "Material Request",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approval Pending",
     "workflow_builder_id": null
    },
@@ -188,6 +199,7 @@
     "parent": "Material Request",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approval Pending",
     "workflow_builder_id": null
    },
@@ -200,6 +212,7 @@
     "parent": "Material Request",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Team Leader (Not Regular)",
     "workflow_builder_id": null
    },
@@ -212,6 +225,7 @@
     "parent": "Material Request",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Team Leader (Not Regular)",
     "workflow_builder_id": null
    },
@@ -224,6 +238,7 @@
     "parent": "Material Request",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Rejected By BOD",
     "workflow_builder_id": null
    },
@@ -236,6 +251,7 @@
     "parent": "Material Request",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Rejected By Team Leader",
     "workflow_builder_id": null
    }
@@ -264,6 +280,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Draft",
     "update_field": null,
     "update_value": null,
@@ -279,6 +296,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approval Pending from Purchase Team Leader",
     "update_field": null,
     "update_value": null,
@@ -294,6 +312,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approved By Purchase Team Leader",
     "update_field": null,
     "update_value": null,
@@ -309,6 +328,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approved By Purchase Team Leader (Not Regular)",
     "update_field": null,
     "update_value": null,
@@ -324,6 +344,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Rejected By Purchase Team Leader",
     "update_field": null,
     "update_value": null,
@@ -339,6 +360,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approved By BOD",
     "update_field": null,
     "update_value": null,
@@ -354,6 +376,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Rejected By BOD",
     "update_field": null,
     "update_value": null,
@@ -369,6 +392,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approved By Accounting Team",
     "update_field": null,
     "update_value": null,
@@ -384,6 +408,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Rejected By Accounting Team",
     "update_field": null,
     "update_value": null,
@@ -399,6 +424,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approval Pending from Requester Team Leader",
     "update_field": null,
     "update_value": null,
@@ -414,6 +440,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approved By Requester Team Leader",
     "update_field": null,
     "update_value": null,
@@ -429,6 +456,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approved By Requester Team Leader (Not Regular)",
     "update_field": null,
     "update_value": null,
@@ -444,6 +472,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Rejected By Requester Team Leader",
     "update_field": null,
     "update_value": null,
@@ -460,6 +489,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Draft",
     "workflow_builder_id": null
    },
@@ -472,6 +502,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approval Pending from Purchase Team Leader",
     "workflow_builder_id": null
    },
@@ -484,6 +515,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approval Pending from Purchase Team Leader",
     "workflow_builder_id": null
    },
@@ -496,6 +528,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Rejected By Purchase Team Leader",
     "workflow_builder_id": null
    },
@@ -508,6 +541,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Purchase Team Leader",
     "workflow_builder_id": null
    },
@@ -520,6 +554,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approval Pending from Purchase Team Leader",
     "workflow_builder_id": null
    },
@@ -532,6 +567,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Purchase Team Leader (Not Regular)",
     "workflow_builder_id": null
    },
@@ -544,6 +580,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By BOD",
     "workflow_builder_id": null
    },
@@ -556,6 +593,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By BOD",
     "workflow_builder_id": null
    },
@@ -568,6 +606,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Purchase Team Leader (Not Regular)",
     "workflow_builder_id": null
    },
@@ -580,6 +619,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Rejected By BOD",
     "workflow_builder_id": null
    },
@@ -592,6 +632,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Purchase Team Leader",
     "workflow_builder_id": null
    },
@@ -604,6 +645,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Rejected By Accounting Team",
     "workflow_builder_id": null
    },
@@ -616,6 +658,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Draft",
     "workflow_builder_id": null
    },
@@ -628,6 +671,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approval Pending from Requester Team Leader",
     "workflow_builder_id": null
    },
@@ -640,6 +684,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approval Pending from Requester Team Leader",
     "workflow_builder_id": null
    },
@@ -652,6 +697,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Rejected By Requester Team Leader",
     "workflow_builder_id": null
    },
@@ -664,6 +710,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Requester Team Leader",
     "workflow_builder_id": null
    },
@@ -676,6 +723,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approval Pending from Requester Team Leader",
     "workflow_builder_id": null
    },
@@ -688,6 +736,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Requester Team Leader (Not Regular)",
     "workflow_builder_id": null
    },
@@ -700,6 +749,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Requester Team Leader (Not Regular)",
     "workflow_builder_id": null
    },
@@ -712,6 +762,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Rejected By BOD",
     "workflow_builder_id": null
    },
@@ -724,6 +775,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Requester Team Leader",
     "workflow_builder_id": null
    },
@@ -736,6 +788,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Rejected By Accounting Team",
     "workflow_builder_id": null
    },
@@ -748,6 +801,7 @@
     "parent": "Purchase Order",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Rejected By Accounting Team",
     "workflow_builder_id": null
    }
@@ -776,6 +830,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Draft",
     "update_field": null,
     "update_value": null,
@@ -791,6 +846,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approval Pending",
     "update_field": null,
     "update_value": null,
@@ -806,6 +862,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approved By Team Leader",
     "update_field": null,
     "update_value": null,
@@ -821,6 +878,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approved By Team Leader (Not Regular)",
     "update_field": null,
     "update_value": null,
@@ -836,6 +894,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Rejected By Team Leader",
     "update_field": null,
     "update_value": null,
@@ -851,6 +910,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approved By BOD",
     "update_field": null,
     "update_value": null,
@@ -866,6 +926,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Rejected By BOD",
     "update_field": null,
     "update_value": null,
@@ -881,6 +942,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Approved By Accounting Team",
     "update_field": null,
     "update_value": null,
@@ -896,6 +958,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "states",
     "parenttype": "Workflow",
+    "send_email": 0,
     "state": "Rejected By Accounting Team",
     "update_field": null,
     "update_value": null,
@@ -912,6 +975,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Draft",
     "workflow_builder_id": null
    },
@@ -924,6 +988,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approval Pending",
     "workflow_builder_id": null
    },
@@ -936,6 +1001,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approval Pending",
     "workflow_builder_id": null
    },
@@ -948,6 +1014,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Rejected By Team Leader",
     "workflow_builder_id": null
    },
@@ -960,6 +1027,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Team Leader",
     "workflow_builder_id": null
    },
@@ -972,6 +1040,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approval Pending",
     "workflow_builder_id": null
    },
@@ -984,6 +1053,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Team Leader (Not Regular)",
     "workflow_builder_id": null
    },
@@ -996,6 +1066,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By BOD",
     "workflow_builder_id": null
    },
@@ -1008,6 +1079,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By BOD",
     "workflow_builder_id": null
    },
@@ -1020,6 +1092,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Team Leader (Not Regular)",
     "workflow_builder_id": null
    },
@@ -1032,6 +1105,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Rejected By BOD",
     "workflow_builder_id": null
    },
@@ -1044,6 +1118,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Approved By Team Leader",
     "workflow_builder_id": null
    },
@@ -1056,6 +1131,7 @@
     "parent": "Purchase Order Updated",
     "parentfield": "transitions",
     "parenttype": "Workflow",
+    "send_email_to_creator": 0,
     "state": "Rejected By Accounting Team",
     "workflow_builder_id": null
    }
