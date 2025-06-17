@@ -279,3 +279,10 @@ def set_custom_id_fields_for_asset(doc, method):
         else:
             doc.naming_series = "ACC-ASS-.YYYY.-"
 
+
+@frappe.whitelist()
+def get_item_image(item_code):
+    image = frappe.db.get_value("Item", item_code, "image")
+    return image
+
+
