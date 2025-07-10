@@ -1,5 +1,6 @@
 import json
 import frappe
+from frappe.utils import get_datetime
 from frappe import _, msgprint
 from datetime import datetime, date 
 from frappe.model.mapper import get_mapped_doc
@@ -284,5 +285,74 @@ def set_custom_id_fields_for_asset(doc, method):
 def get_item_image(item_code):
     image = frappe.db.get_value("Item", item_code, "image")
     return image
+
+@frappe.whitelist()
+def get_work_orders_for_cutting(from_date=None, to_date=None, item=None):
+    filters = {
+        "status": "Not Started"
+    }
+
+    if item:
+        filters["production_item"] = item
+
+    if from_date and to_date:
+        from_datetime = get_datetime(from_date + " 00:00:00")
+        to_datetime = get_datetime(to_date + " 23:59:59")
+        filters["planned_start_date"] = ["between", [from_datetime, to_datetime]]
+
+    if not item and not (from_date and to_date):
+        return []
+
+    work_orders = frappe.get_list(
+        "Work Order",
+        filters=filters,
+        fields=["name"],
+        order_by="planned_start_date asc"
+    )
+
+    result = []
+
+    for wo in work_orders:
+        work_order_doc = frappe.get_doc("Work Order", wo.name)
+        for item in work_order_doc.required_items:
+            item_doc = frappe.get_doc("Item", item.item_code)
+            if item_doc.item_group == "Fabric":
+                result.append({
+                    "work_order": wo.name,
+                    "item_fabric": item.item_code,
+                    "qty": item.required_qty
+                })
+
+    return result
+
+# @frappe.whitelist()
+# def get_work_orders_for_cutting(from_date, to_date):
+#     from_datetime = get_datetime(from_date + " 00:00:00")
+#     to_datetime = get_datetime(to_date + " 23:59:59")
+
+#     work_orders = frappe.get_list(
+#         "Work Order",
+#         filters={
+#             "planned_start_date": ["between", [from_datetime, to_datetime]],
+#             "status": "Not Started"
+#         },
+#         fields=["name"],
+#         order_by="planned_start_date asc"
+#     )
+
+#     result = []
+
+#     for wo in work_orders:
+#         work_order_doc = frappe.get_doc("Work Order", wo.name)
+#         for item in work_order_doc.required_items:
+#             item_doc = frappe.get_doc("Item", item.item_code)
+#             if item_doc.item_group == "Fabric":
+#                 result.append({
+#                     "work_order": wo.name,
+#                     "item_fabric": item.item_code,
+#                     "qty": item.required_qty
+#                 })
+
+#     return result
 
 

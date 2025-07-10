@@ -263,4 +263,4 @@ doc_events = {
 # 	"baller_headwear.auth.validate"
 # ]
 
-fixtures = ["Custom Field","Print Format","Client Script","Workflow","Role"]
+fixtures = ["Custom Field","Print Format","Client Script","Workflow","Role","Server Script"]

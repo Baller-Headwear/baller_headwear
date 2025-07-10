@@ -35,17 +35,6 @@
  {
   "docstatus": 0,
   "doctype": "Client Script",
-  "dt": "Pick List",
-  "enabled": 1,
-  "modified": "2025-04-12 12:35:01.084007",
-  "module": null,
-  "name": "Test pick list",
-  "script": "frappe.ui.form.on('Pick List', {\n  refresh(frm) {\n    if (frm.doc.purpose === \"Material Transfer for Manufacture\" && frm.doc.docstatus === 0) {\n      frm.add_custom_button(\"Get Items from Work Orders\", () => {\n        // Mở dialog chọn Work Order\n        const d = new frappe.ui.form.MultiSelectDialog({\n          doctype: \"Work Order\",\n          target: frm,\n          setters: {\n            production_item: undefined,\n            company: frm.doc.company,\n            status: \"Submitted\",\n          },\n          add_filters_group: 1,\n          get_query() {\n            return {\n              filters: {\n                docstatus: 1,\n                status: [\"!=\", \"Completed\"],\n              },\n            };\n          },\n          action(selections) {\n            if (selections && selections.length > 0) {\n              frappe.call({\n                method: \"erpnext.stock.doctype.pick_list.pick_list.get_items_from_work_orders\",\n                args: {\n                  work_orders: selections,\n                  company: frm.doc.company,\n                },\n                callback: function(r) {\n                  if (!r.exc && r.message) {\n                    frm.clear_table(\"locations\");\n                    $.each(r.message, function(i, d) {\n                      const row = frm.add_child(\"locations\");\n                      Object.assign(row, d);\n                    });\n                    frm.refresh_field(\"locations\");\n                    d.dialog.hide();\n                  }\n                },\n              });\n            }\n          },\n        });\n      });\n    }\n  }\n});\n",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
   "dt": "Sales Order",
   "enabled": 1,
   "modified": "2025-03-04 12:09:05.594943",
@@ -246,10 +235,98 @@
   "doctype": "Client Script",
   "dt": "BOM Creator",
   "enabled": 1,
-  "modified": "2025-05-24 18:39:19.296286",
+  "modified": "2025-07-10 09:01:17.749730",
   "module": null,
   "name": "Calc Planned Fabric Needed",
   "script": "frappe.ui.form.on('BOM Creator Item', {\n    qty: function(frm, cdt, cdn) {\n        update_planned_fabric_needed(frm, cdt, cdn);\n    }\n});\nfrappe.ui.form.on('BOM Creator', {\n    custom_planned_qty: function(frm) {\n        frm.doc.items.forEach(function(child) {\n            var cdt = child.doctype;\n            var cdn = child.name;\n            update_planned_fabric_needed(frm, cdt, cdn);\n        });\n        frm.refresh_field('items');\n    }\n});\n\nfunction update_planned_fabric_needed(frm, cdt, cdn) {\n    var child_doc = locals[cdt][cdn];\n    if (frm.doc.custom_planned_qty && child_doc.qty) {\n        var custom_planned_fabric_needed = frm.doc.custom_planned_qty * child_doc.qty;\n        frappe.model.set_value(cdt, cdn, 'custom_planned_fabric_needed', custom_planned_fabric_needed);\n    }\n}\n\n// frappe.ui.form.on('BOM Creator Item', {\n//     qty: function(frm, cdt, cdn) {\n//         var child_doc = locals[cdt][cdn];\n        \n//         var custom_planned_fabric_needed = frm.doc.custom_planned_qty * child_doc.qty;\n        \n//         frappe.model.set_value(cdt, cdn, 'custom_planned_fabric_needed', custom_planned_fabric_needed);\n//     }\n// })\n\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Cutting Operation",
+  "enabled": 1,
+  "modified": "2025-06-27 14:54:55.820603",
+  "module": "Baller Headwear",
+  "name": "Fetch Work Order Data",
+  "script": "frappe.ui.form.on('Cutting Operation', {\r\n    fetch_work_order: function(frm) {\r\n        if (!frm.doc.item && (!frm.doc.from_date || !frm.doc.to_date)) {\r\n            frappe.msgprint(__('Please select either Item or From/To Date.'));\r\n            return;\r\n        }\r\n\r\n        frappe.call({\r\n            method: \"baller_headwear.baller_headwear.api.get_work_orders_for_cutting\",\r\n            args: {\r\n                from_date: frm.doc.from_date,\r\n                to_date: frm.doc.to_date,\r\n                item: frm.doc.item\r\n            },\r\n            callback: function(r) {\r\n                if (r.message && r.message.length) {\r\n                    frm.clear_table(\"cutting_material\");\r\n\r\n                    r.message.forEach(item => {\r\n                        let row = frm.add_child(\"cutting_material\");\r\n                        row.work_order = item.work_order;\r\n                        row.item_fabric = item.item_fabric;\r\n                        row.qty = item.qty;\r\n                    });\r\n\r\n                    frm.refresh_field(\"cutting_material\");\r\n                    frappe.msgprint(`${r.message.length} Fabric item(s) added from Work Orders.`);\r\n                } else {\r\n                    frappe.msgprint(\"No matching Fabric items found in Work Orders.\");\r\n                }\r\n            }\r\n        });\r\n    }\r\n});\r\n\r\n\r\n\r\n\r\n// frappe.ui.form.on('Cutting Operation', {\r\n//     fetch_work_order: function(frm) {\r\n//         if (!frm.doc.from_date || !frm.doc.to_date) {\r\n//             frappe.msgprint(__('Please enter From Date and To Date.'));\r\n//             return;\r\n//         }\r\n\r\n//         frappe.call({\r\n//             method: \"baller_headwear.baller_headwear.api.get_work_orders_for_cutting\",\r\n//             args: {\r\n//                 from_date: frm.doc.from_date,\r\n//                 to_date: frm.doc.to_date\r\n//             },\r\n//             callback: function(r) {\r\n//                 if (r.message && r.message.length) {\r\n//                     frm.clear_table(\"cutting_material\");\r\n\r\n//                     r.message.forEach(wo => {\r\n//                         let row = frm.add_child(\"cutting_material\");\r\n//                         row.work_order = wo.name;\r\n//                     });\r\n\r\n//                     frm.refresh_field(\"cutting_material\");\r\n//                     frappe.msgprint(`${r.message.length} Work Order(s) added.`);\r\n//                 } else {\r\n//                     frappe.msgprint(\"No matching Work Orders found.\");\r\n//                 }\r\n//             }\r\n//         });\r\n//     }\r\n// });\r\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Cutting Operation",
+  "enabled": 1,
+  "modified": "2025-06-27 14:09:49.164883",
+  "module": "Baller Headwear",
+  "name": "Calculation of Layer and Actual Qty",
+  "script": "frappe.ui.form.on('Cutting Operation Items', {\r\n  no_of_piece(frm, cdt, cdn) {\r\n    const row = locals[cdt][cdn];\r\n\r\n    if (row.no_of_piece && row.planned_qty) {\r\n      row.layer = Math.round(row.planned_qty / row.no_of_piece);\r\n    }\r\n\r\n    if (row.layer && row.cutting_mould) {\r\n      row.actual_qty = row.layer * row.cutting_mould;\r\n    }\r\n\r\n    frm.refresh_field('cutting_material');\r\n  },\r\n\r\n//   cutting_mould(frm, cdt, cdn) {\r\n//     const row = locals[cdt][cdn];\r\n\r\n//     if (row.layer && row.cutting_mould) {\r\n//       row.actual_qty = row.layer * row.cutting_mould;\r\n//       frm.refresh_field('cutting_material');\r\n//     }\r\n//   }\r\n});\r\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Pattern Cutting Specification",
+  "enabled": 1,
+  "modified": "2025-06-27 17:02:23.927947",
+  "module": "Baller Headwear",
+  "name": "Pattern Cutting Specification (ID)",
+  "script": "frappe.ui.form.on('Pattern Cutting Specification', {\n\tcutting_mould:function (frm) {\n\t\tfrm.set_value('cutting_mould_copy',`'${frm.doc.cutting_mould}'`);\n\t}\n})",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Purchase Order",
+  "enabled": 0,
+  "modified": "2025-07-09 14:14:42.928488",
+  "module": null,
+  "name": "PIC-PO",
+  "script": "frappe.ui.form.on('Purchase Order', {\n    onload: function(frm) {\n        if (frm.is_new() && !frm.doc.custom_pic) {\n            frm.set_value('custom_pic', frappe.session.user);\n        }\n    },\n\n    custom_pic: function(frm) {\n        if (frm.doc.custom_pic) {\n            frappe.db.get_doc('User', frm.doc.custom_pic).then(user => {\n                const full_name = user.full_name || `${user.first_name} ${user.last_name || ''}`;\n                const email = user.email || '';\n                const phone = user.phone || '';\n                const mobile = user.mobile_no || '';\n\n                const desc = `👤 ${full_name}<br>📧 ${email}<br>📞 Phone: ${phone || '-'} | Mobile: ${mobile || '-'}`;\n                \n                frm.fields_dict.custom_pic.set_description(desc);\n            });\n        } else {\n            frm.fields_dict.custom_pic.set_description('');\n        }\n    }\n});\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Pick List",
+  "enabled": 0,
+  "modified": "2025-07-09 14:14:43.028560",
+  "module": null,
+  "name": "pick list production plan",
+  "script": "frappe.ui.form.on('Pick List', {\n    refresh(frm) {\n        frm.add_custom_button('Chọn WO từ PP', function () {\n            let pp = frm.doc.custom_production_plan;\n\n            if (!pp) {\n                frappe.msgprint('Vui lòng chọn Production Plan trước.');\n                return;\n            }\n\n            frappe.call({\n                method: 'frappe.handler.run_server_script',\n                args: {\n                    script: 'get_work_orders_by_production_plan',\n                    production_plan: pp\n                },\n                callback(r) {\n                    if (!r.message || r.message.length === 0) {\n                        frappe.msgprint('Không tìm thấy Work Order nào.');\n                        return;\n                    }\n\n                    new frappe.ui.form.MultiSelectDialog({\n                        doctype: 'Work Order',\n                        target: frm,\n                        date_field: 'planned_start_date',\n                        setters: {},\n                        get_query() {\n                            return {\n                                filters: {\n                                    name: ['in', r.message.map(w => w.name)]\n                                }\n                            };\n                        },\n                        action(selections) {\n                            frappe.msgprint(`Bạn đã chọn ${selections.length} WO: ${selections.join(', ')}`);\n                            // Gọi server script khác để lấy NVL sau này nếu muốn\n                        }\n                    });\n                }\n            });\n        });\n    }\n});\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "BOM Creator",
+  "enabled": 0,
+  "modified": "2025-07-10 11:21:19.733934",
+  "module": "Baller Headwear",
+  "name": "Auto Parent Row No",
+  "script": "frappe.ui.form.on(\"BOM Creator Item\", {\n  fg_item: function(frm, cdt, cdn) {\n    let current_row = locals[cdt][cdn];\n\n    console.log(\"FG Item selected:\", current_row.fg_item);\n\n    let parent_row = frm.doc.items.find(\n      row => row.item_code === current_row.fg_item\n    );\n\n    if (parent_row) {\n      console.log(\"Match found at row:\", parent_row.idx);\n      frappe.model.set_value(cdt, cdn, \"parent_row_no\", parent_row.idx);\n    } else {\n      console.log(\"No match found.\");\n      frappe.model.set_value(cdt, cdn, \"parent_row_no\", \"\");\n    }\n  }\n});\n\n\n\n// frappe.ui.form.on(\"BOM Creator\", {\n//   onload: function(frm) {\n//     frm.fields_dict.items.grid.on_sort = () => {\n//       console.log(\"Rows have been reordered.\");\n\n//       frm.doc.items.forEach(child => {\n//         let parent_row = frm.doc.items.find(\n//           row => row.item_code === child.fg_item\n//         );\n//         if (parent_row) {\n//           frappe.model.set_value(child.doctype, child.name, \"parent_row_no\", parent_row.idx);\n//         } else {\n//           frappe.model.set_value(child.doctype, child.name, \"parent_row_no\", \"\");\n//         }\n//       });\n//     };\n//   }\n// });\n\n\n\nfrappe.ui.form.on(\"BOM Creator\", {\n  validate: function(frm) {\n    frm.doc.items.forEach(row => {\n      const parent_row = frm.doc.items.find(r => r.item_code === row.fg_item);\n      if (parent_row) {\n        frappe.model.set_value(row.doctype, row.name, \"parent_row_no\", parent_row.idx);\n      } else {\n        frappe.model.set_value(row.doctype, row.name, \"parent_row_no\", \"\");\n      }\n    });\n  }\n});\n\n\n\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Material Request",
+  "enabled": 0,
+  "modified": "2025-07-09 14:14:42.989487",
+  "module": null,
+  "name": "Material request item",
+  "script": "frappe.ui.form.on('Material Request', {\n    validate: async function(frm) {\n        for (let item of frm.doc.items) {\n            if (!item.schedule_date || !item.item_code) continue;\n\n            let res = await frappe.call({\n                method: 'frappe.client.get_value',\n                args: {\n                    doctype: 'Item',\n                    filters: { name: item.item_code },\n                    fieldname: 'lead_time_days'\n                }\n            });\n\n            const lead_days = res.message.lead_time_days || 0;\n            const today = frappe.datetime.get_today();\n            const min_required_date = frappe.datetime.add_days(today, lead_days);\n\n            if (frappe.datetime.str_to_obj(item.schedule_date) < frappe.datetime.str_to_obj(min_required_date)) {\n                frappe.throw(`\n                    Dòng item <b>${item.item_code}</b>: Required Date (${item.schedule_date}) không hợp lệ.<br>\n                    Phải sau tối thiểu <b>${lead_days}</b> ngày kể từ hôm nay (${today}).\n                `);\n            }\n        }\n    }\n});\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "BOM Creator",
+  "enabled": 0,
+  "modified": "2025-07-10 11:23:32.031582",
+  "module": "Baller Headwear",
+  "name": "Auto Source Warehouse",
+  "script": "frappe.ui.form.on(\"BOM Creator\", {\n  onload: function(frm) {\n    frm.fields_dict.items.grid.on_sort = () => {\n      console.log(\"Items reordered. Rechecking source warehouse...\");\n      update_source_warehouses(frm);\n    };\n  },\n\n  refresh: function(frm) {\n    update_source_warehouses(frm);\n  },\n\n  validate: function(frm) {\n    update_source_warehouses(frm);\n  }\n});\n\nfrappe.ui.form.on(\"BOM Creator Item\", {\n  item_code: function(frm, cdt, cdn) {\n    let row = locals[cdt][cdn];\n    update_source_warehouse(row);\n    frm.refresh_field(\"items\");\n  }\n});\n\nfunction update_source_warehouses(frm) {\n  frm.doc.items.forEach(row => {\n    update_source_warehouse(row);\n  });\n  frm.refresh_field(\"items\");\n}\n\nfunction update_source_warehouse(row) {\n  if (!row.item_code) return;\n\n  if (row.item_code.startsWith(\"SW-\") || row.item_code.startsWith(\"Piping\")) {\n    row.source_warehouse = \"Semi-finished Goods  - BHV\";\n  } else {\n    row.source_warehouse = \"Main Store - BHV\";\n  }\n}\n",
   "view": "Form"
  }
 ]

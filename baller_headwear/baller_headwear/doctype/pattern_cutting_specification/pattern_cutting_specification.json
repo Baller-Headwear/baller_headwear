@@ -1,0 +1,112 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-06-27 11:27:03.008807",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "pattern_cutting_name",
+  "size",
+  "form",
+  "panel_name",
+  "cutting_mould",
+  "cutting_mould_copy",
+  "uom",
+  "no_of_piece",
+  "naming_series",
+  "enabled"
+ ],
+ "fields": [
+  {
+   "fieldname": "pattern_cutting_name",
+   "fieldtype": "Data",
+   "label": "Pattern Cutting Name"
+  },
+  {
+   "fieldname": "size",
+   "fieldtype": "Data",
+   "label": "Size"
+  },
+  {
+   "fieldname": "form",
+   "fieldtype": "Data",
+   "label": "Form"
+  },
+  {
+   "fieldname": "panel_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Panel Name",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cutting_mould",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Cutting Mould",
+   "precision": "5",
+   "reqd": 1
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "no_of_piece",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "No. of Piece",
+   "reqd": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series"
+  },
+  {
+   "fieldname": "cutting_mould_copy",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Cutting Mould Copy",
+   "precision": "5"
+  },
+  {
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-06-27 17:12:59.160203",
+ "modified_by": "Administrator",
+ "module": "Baller Headwear",
+ "name": "Pattern Cutting Specification",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,119 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-06-27 11:36:35.449780",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "work_order",
+  "finished_good",
+  "size",
+  "planned_qty",
+  "item_fabric",
+  "qty",
+  "type",
+  "pattern_cutting_specification",
+  "layer",
+  "actual_qty",
+  "cutting_mould",
+  "no_of_piece"
+ ],
+ "fields": [
+  {
+   "fieldname": "work_order",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Work Order",
+   "options": "Work Order"
+  },
+  {
+   "fetch_from": "work_order.production_item",
+   "fieldname": "finished_good",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Finished Good",
+   "options": "Item"
+  },
+  {
+   "fieldname": "size",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Size"
+  },
+  {
+   "fetch_from": "work_order.qty",
+   "fieldname": "planned_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Planned Qty"
+  },
+  {
+   "fieldname": "item_fabric",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Fabric",
+   "options": "Item"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Type"
+  },
+  {
+   "fieldname": "pattern_cutting_specification",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Pattern Cutting Specification",
+   "options": "Pattern Cutting Specification"
+  },
+  {
+   "fieldname": "layer",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Layer"
+  },
+  {
+   "fieldname": "actual_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Actual Qty"
+  },
+  {
+   "fetch_from": "pattern_cutting_specification.cutting_mould",
+   "fieldname": "cutting_mould",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Cutting Mould",
+   "precision": "5"
+  },
+  {
+   "fetch_from": "pattern_cutting_specification.no_of_piece",
+   "fieldname": "no_of_piece",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "No. of Piece"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-06-27 14:12:21.891415",
+ "modified_by": "Administrator",
+ "module": "Baller Headwear",
+ "name": "Cutting Operation Items",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
