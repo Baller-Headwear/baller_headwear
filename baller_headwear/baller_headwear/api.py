@@ -254,27 +254,58 @@ def set_custom_id_fields_for_posting_date_payment_entry(doc, method):
         else:
             doc.naming_series = "ACC-PAY-.YYYY.-"
 
+# @frappe.whitelist()
+# def set_custom_id_fields_for_asset(doc, method):
+#     company_settings = frappe.get_doc("Company Settings")
+
+#     if doc.purchase_date:
+
+#         purchase_date = datetime.strptime(doc.purchase_date, '%Y-%m-%d')
+
+#         month = purchase_date.month
+#         year = purchase_date.year
+        
+
+#         year_formatted = str(year)[-2:]  
+#         month_formatted = f"{month:02d}" 
+        
+
+#         doc.custom_id_month = month_formatted
+#         doc.custom_id_year = year_formatted
+
+#         if doc.naming_series == "ACC-ASS-2024-":
+#             doc.naming_series = "ACC-ASS-2024-" 
+#         elif doc.company == company_settings.vietnam_company_name:
+#             doc.naming_series = ".{custom_abbr}.-ASS-.{custom_id_year}.-.{custom_id_month}.-.####"
+#         else:
+#             doc.naming_series = "ACC-ASS-.YYYY.-"
+
+
 @frappe.whitelist()
 def set_custom_id_fields_for_asset(doc, method):
     company_settings = frappe.get_doc("Company Settings")
 
     if doc.purchase_date:
+        # Handle both string and date
+        if isinstance(doc.purchase_date, str):
+            purchase_date = datetime.strptime(doc.purchase_date, '%Y-%m-%d').date()
+        elif isinstance(doc.purchase_date, datetime):
+            purchase_date = doc.purchase_date.date()
+        elif isinstance(doc.purchase_date, date):
+            purchase_date = doc.purchase_date
+        else:
+            frappe.throw(f"Unexpected type for purchase_date: {type(doc.purchase_date)}")
 
-        purchase_date = datetime.strptime(doc.purchase_date, '%Y-%m-%d')
-
-        month = purchase_date.month
-        year = purchase_date.year
-        
-
-        year_formatted = str(year)[-2:]  
-        month_formatted = f"{month:02d}" 
-        
+        # Extract month/year
+        month_formatted = f"{purchase_date.month:02d}"
+        year_formatted = str(purchase_date.year)[-2:]
 
         doc.custom_id_month = month_formatted
         doc.custom_id_year = year_formatted
 
+        # Naming series logic
         if doc.naming_series == "ACC-ASS-2024-":
-            doc.naming_series = "ACC-ASS-2024-" 
+            doc.naming_series = "ACC-ASS-2024-"
         elif doc.company == company_settings.vietnam_company_name:
             doc.naming_series = ".{custom_abbr}.-ASS-.{custom_id_year}.-.{custom_id_month}.-.####"
         else:
