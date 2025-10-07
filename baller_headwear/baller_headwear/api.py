@@ -259,8 +259,14 @@ def set_custom_id_fields_for_asset(doc, method):
     company_settings = frappe.get_doc("Company Settings")
 
     if doc.purchase_date:
+        purchase_date = doc.purchase_date
+        if isinstance(purchase_date, date):
+            # It's already a date object, keep as is
+            pass
+        else:
+            # Convert from string (if it's a string or something else)
+            purchase_date = datetime.strptime(str(purchase_date), '%Y-%m-%d').date()
 
-        purchase_date = datetime.strptime(doc.purchase_date, '%Y-%m-%d')
 
         month = purchase_date.month
         year = purchase_date.year
