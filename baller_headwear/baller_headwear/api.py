@@ -176,11 +176,36 @@ def set_custom_id_fields_for_posting_date(doc, method):
         doc.custom_id_month = month_formatted
         doc.custom_id_year = year_formatted
 
-def parse_date(date_string):
-    try:
-        return datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S.%f')
-    except ValueError:
-        return datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S')
+def parse_date(date_input):
+    if date_input is None:
+        return None
+
+    if isinstance(date_input, datetime):
+        return date_input
+
+    if isinstance(date_input, date):
+        return datetime.combine(date_input, datetime.min.time())
+
+    if isinstance(date_input, (int, float)):
+        # Treat numeric input as a timestamp (in seconds)
+        return datetime.fromtimestamp(float(date_input))
+
+    # Convert anything else to string and try parsing
+    date_str = str(date_input).strip()
+    formats = [
+        '%Y-%m-%d %H:%M:%S.%f',
+        '%Y-%m-%d %H:%M:%S',
+        '%Y-%m-%d',
+        '%Y/%m/%d',
+    ]
+    for fmt in formats:
+        try:
+            return datetime.strptime(date_str, fmt)
+        except ValueError:
+            continue
+
+    raise ValueError(f"Could not parse date: {date_input!r}")
+
 
 
 @frappe.whitelist() 
