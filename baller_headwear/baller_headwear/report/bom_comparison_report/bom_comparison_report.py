@@ -39,7 +39,7 @@ def get_data(filters):
         conditions += " AND si.posting_date BETWEEN %(from_date)s AND %(to_date)s "
 
     if filters.get("item_code"):
-        conditions += " AND sii.item_code = %(item_code)s "
+        conditions += " AND wo.production_item = %(item_code)s "
 
     data = frappe.db.sql(f"""
         SELECT si.posting_date as sale_invoice_date,
@@ -67,7 +67,7 @@ def get_data(filters):
             si.docstatus = 1
             AND se.docstatus = 1
             {conditions}   
-        GROUP BY bom_doc.item,bom_item.item_code,wo.production_item
+        GROUP BY bom_doc.item, bom_item.item_code, wo.production_item
         ORDER BY 
             si.posting_date DESC
                 LIMIT {page_length} OFFSET {offset};
