@@ -66,8 +66,8 @@ def get_data(filters):
         WHERE
             si.docstatus = 1
             AND se.docstatus = 1
-            {conditions}      
-
+            {conditions}   
+        GROUP BY bom_doc.item,bom_item.item_code,wo.production_item
         ORDER BY 
             si.posting_date DESC
                 LIMIT {page_length} OFFSET {offset};
