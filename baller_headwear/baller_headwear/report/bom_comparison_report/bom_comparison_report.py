@@ -32,7 +32,7 @@ def get_data(filters):
         filters = {}
 
     page = int(filters.get("page") or 1)
-    page_length = int(filters.get("page_length") or 1000)
+    page_length = int(filters.get("page_length") or 100)
     offset = (page - 1) * page_length
     conditions = ""
     from_date = filters.get("from_date")
@@ -44,7 +44,10 @@ def get_data(filters):
 
     if filters.get("fg_item"):
         conditions += " AND wo.production_item = %(fg_item)s "
-
+  
+    if conditions:
+        page_length = 10000
+        
     data = frappe.db.sql(f"""
         SELECT si.posting_date as sale_invoice_date,
             so.name AS sales_order,
