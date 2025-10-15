@@ -34,12 +34,12 @@ def get_data(filters):
     warehouse = filters.get("warehouse")
     page = int(filters.get("page") or 1)
     page_length = int(filters.get("page_length") or 50)
-    offset = (page - 1) * page_length
+    offset = 0
     conditions = ""
     from_date = filters.get("from_date")
     to_date = filters.get("to_date")
     fg_item = filters.get("fg_item")
-    return []
+
     if filters.get("from_date") and filters.get("to_date"):
         conditions += " AND se.posting_date BETWEEN %(from_date)s AND %(to_date)s "
 
