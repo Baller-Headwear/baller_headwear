@@ -42,7 +42,7 @@ def get_data(filters):
         conditions += " AND se.posting_date BETWEEN %(from_date)s AND %(to_date)s "
 
     if filters.get("fg_item"):
-        conditions += " AND COALESCE(parent_bom.item, bom_doc.item) = %(fg_item)s "
+        conditions += " parent_bom.item = %(fg_item)s "
     
     if warehouse:
         conditions += " AND sed.s_warehouse = %(warehouse)s "
