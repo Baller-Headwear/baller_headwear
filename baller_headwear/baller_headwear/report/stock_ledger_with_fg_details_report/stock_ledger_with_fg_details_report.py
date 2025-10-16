@@ -27,8 +27,6 @@ def get_data(filters):
     if not filters:
         filters = {}
 
-    if not filters:
-        filters = {}
     warehouse = filters.get("warehouse")
     page = int(filters.get("page") or 1)
     page_length = int(filters.get("page_length") or 100)
@@ -42,7 +40,7 @@ def get_data(filters):
         conditions += " AND se.posting_date BETWEEN %(from_date)s AND %(to_date)s "
 
     if filters.get("fg_item"):
-        conditions += " parent_bom.item = %(fg_item)s "
+        conditions += " AND parent_bom.item = %(fg_item)s "
     
     if warehouse:
         conditions += " AND sed.s_warehouse = %(warehouse)s "
