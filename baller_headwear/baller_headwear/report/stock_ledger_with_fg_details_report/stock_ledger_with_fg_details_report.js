@@ -1,5 +1,5 @@
 
-frappe.query_reports["Stock Entry with FG Details Report"] = {
+frappe.query_reports["Stock Ledger with FG Details Report"] = {
     "filters": [
         {
             "fieldname": "from_date",
