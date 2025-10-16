@@ -1,4 +1,3 @@
-
 import frappe
 
 def execute(filters=None):
@@ -17,7 +16,6 @@ def get_columns():
         {"label": "Request Item", "fieldname": "rm_item", "fieldtype": "Link", "options": "Item", "width": 140},
         {"label": "FG Item", "fieldname": "fg_item", "fieldtype": "Link", "options": "Item", "width": 140},
         {"label": "UOM", "fieldname": "uom", "fieldtype": "Data", "width": 60},
-        # {"label": "Balance Qty", "fieldname": "balance_qty", "fieldtype": "Float", "width": 150},
         {"label": "Unit Price", "fieldname": "unit_price", "fieldtype": "Currency", "width": 150},
         {"label": "Out Qty", "fieldname": "out_qty", "fieldtype": "Float", "width": 150},
         {"label": "Out Amount", "fieldname": "out_amount", "fieldtype": "Currency", "width": 250},
@@ -31,10 +29,9 @@ def get_data(filters):
 
     if not filters:
         filters = {}
-
     warehouse = filters.get("warehouse")
     page = int(filters.get("page") or 1)
-    page_length = int(filters.get("page_length") or 50)
+    page_length = int(filters.get("page_length") or 100)
     offset = 0
     conditions = ""
     from_date = filters.get("from_date")
@@ -52,7 +49,6 @@ def get_data(filters):
 
     if conditions:
        page_length = 1000
-
     data = frappe.db.sql(f"""
         SELECT 
             se.posting_date,
@@ -90,8 +86,14 @@ def get_data(filters):
             AND sed.item_code = bom_item.item_code
         WHERE 
             se.docstatus = 1
-            {conditions}    
-                LIMIT {page_length} OFFSET {offset};
+            {conditions}
+        GROUP BY se.posting_date,
+            wo.name,
+            bom_doc.name,
+            COALESCE(parent_bom.item, bom_doc.item),
+            bom_item.item_code,
+            wo.production_item
+            LIMIT {page_length} OFFSET {offset}
     """, filters, as_dict=True)
 
     return data
