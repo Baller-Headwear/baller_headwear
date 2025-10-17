@@ -79,7 +79,7 @@ def get_data(filters):
             ON parent_bom.child_bom = bom_doc.name
         INNER JOIN `tabStock Entry` se 
             ON se.work_order = wo.name
-        LEFT JOIN `tabStock Entry Detail` sed 
+        INNER JOIN `tabStock Entry Detail` sed 
             ON sed.parent = se.name 
             AND sed.item_code = bom_item.item_code
         WHERE 
