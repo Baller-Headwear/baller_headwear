@@ -119,7 +119,6 @@ def get_data(filters):
             bom_doc.name, 
             wo.production_item
         ORDER BY in_qty ASC
-        LIMIT {page_length} OFFSET {offset}
     """, filters, as_dict=True)
 
     return data
