@@ -28,8 +28,8 @@ def get_columns():
     return columns
 
 def get_data(filters):
-    from_date = filters.get("from_date")
-    to_date = filters.get("to_date")
+	from_date = get_datetime(filters.from_date + " 00:00:00")
+	to_date = get_datetime(filters.to_date + " 23:59:59")
     warehouse = filters.warehouse
     cost_subject = filters.cost_subject
 
@@ -48,7 +48,6 @@ def get_data(filters):
             FROM `tabBOM` b
             JOIN `tabItem` t ON b.item = t.name
             WHERE b.is_active = 1 AND b.is_default = 1
-            AND t.item_group IN ('CAP', 'Truck Cap')
             UNION ALL
             SELECT child_bom.name, bt.top_item
             FROM `tabBOM Item` bi
