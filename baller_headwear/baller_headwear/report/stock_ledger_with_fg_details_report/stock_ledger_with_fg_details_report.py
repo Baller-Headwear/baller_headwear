@@ -7,9 +7,9 @@ def execute(filters):
 
 def get_columns():
     columns = [
-        {"label": "Stock Entry Date", "fieldname": "posting_date", "fieldtype": "Date", "width": 150},
-        {"label": "Stock Entry Code", "fieldname": "se_name", "fieldtype": "Data", "width": 150},
-        {"label": "Stock Entry type", "fieldname": "stock_entry_type", "fieldtype": "Data", "width": 150},
+        {"label": "Date", "fieldname": "posting_date", "fieldtype": "Date", "width": 150},
+        {"label": "Voucher #", "fieldname": "se_name", "fieldtype": "Data", "width": 150},
+        {"label": "Voucher Type", "fieldname": "stock_entry_type", "fieldtype": "Data", "width": 150},
         {"label": "Bom", "fieldname": "bom_name", "fieldtype": "Data", "width": 150},
         # {"label": "Work Order", "fieldname": "work_order", "fieldtype": "Data", "width": 150},
         {"label": "Cost Subject", "fieldname": "top_item", "fieldtype": "Data", "width": 150},
@@ -86,7 +86,7 @@ def get_data(filters):
         WHERE se.docstatus = 1
         {conditions}
         GROUP BY se_name, bt.bom_name, sed.item_code
-        ORDER BY in_qty ASC
+        ORDER BY se.posting_date ASC
     """, filters, as_dict=True)
 
     return data
