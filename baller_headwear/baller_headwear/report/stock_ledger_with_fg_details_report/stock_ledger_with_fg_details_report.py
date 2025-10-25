@@ -11,7 +11,7 @@ def get_columns():
         {"label": "Stock Entry Code", "fieldname": "se_name", "fieldtype": "Data", "width": 150},
         {"label": "Stock Entry type", "fieldname": "stock_entry_type", "fieldtype": "Data", "width": 150},
         {"label": "Bom", "fieldname": "bom_name", "fieldtype": "Data", "width": 150},
-        {"label": "Work Order", "fieldname": "work_order", "fieldtype": "Data", "width": 150},
+        # {"label": "Work Order", "fieldname": "work_order", "fieldtype": "Data", "width": 150},
         {"label": "Cost Subject", "fieldname": "top_item", "fieldtype": "Data", "width": 150},
         {"label": "Request Item", "fieldname": "rm_item", "fieldtype": "Link", "options": "Item", "width": 140},
         {"label": "FG Item", "fieldname": "fg_item", "fieldtype": "Link", "options": "Item", "width": 140},
@@ -28,8 +28,6 @@ def get_columns():
     return columns
 
 def get_data(filters):
-
-
     from_date = filters.get("from_date")
     to_date = filters.get("to_date")
     warehouse = filters.warehouse
@@ -45,7 +43,8 @@ def get_data(filters):
 
     data = frappe.db.sql(f"""
         WITH RECURSIVE bom_tree AS (
-            SELECT b.name AS bom_name, b.item AS top_item
+            SELECT b.name AS bom_name,
+            b.item AS top_item
             FROM `tabBOM` b
             JOIN `tabItem` t ON b.item = t.name
             WHERE b.is_active = 1 AND b.is_default = 1
@@ -66,6 +65,7 @@ def get_data(filters):
             sed.uom,
             sed.s_warehouse,
             sed.t_warehouse,
+            ROUND(sed.basic_rate,2) as unit_price,
             wo.production_item AS fg_item,
             CASE 
                 WHEN se.stock_entry_type IN ('Material Transfer for Manufacture','Manufacture') AND sed.s_warehouse IS NOT NULL THEN ROUND(sed.qty,3) ELSE 0 END AS out_qty,
