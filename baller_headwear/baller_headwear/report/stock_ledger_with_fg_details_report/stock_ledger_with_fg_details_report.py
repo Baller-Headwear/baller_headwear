@@ -29,8 +29,8 @@ def get_columns():
     return columns
 
 def get_data(filters):
-	from_date = get_datetime(filters.from_date + " 00:00:00")
-	to_date = get_datetime(filters.to_date + " 23:59:59")
+    from_date = get_datetime(filters.from_date + " 00:00:00")
+    to_date = get_datetime(filters.to_date + " 23:59:59")
     warehouse = filters.warehouse
     cost_subject = filters.cost_subject
 
