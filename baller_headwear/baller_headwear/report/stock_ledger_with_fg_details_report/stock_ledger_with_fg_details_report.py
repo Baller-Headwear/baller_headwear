@@ -33,6 +33,12 @@ def get_data(filters):
     to_date = get_datetime(filters.to_date + " 23:59:59")
     warehouse = filters.warehouse
     cost_subject = filters.cost_subject
+    params = {
+        'from_date': from_date,
+        'to_date': to_date,
+        'warehouse': warehouse,
+        'cost_subject': cost_subject
+    }
 
     conditions = ""
     if warehouse:
@@ -87,6 +93,6 @@ def get_data(filters):
         {conditions}
         GROUP BY se_name, bt.bom_name, sed.item_code
         ORDER BY se.posting_date ASC
-    """, filters, as_dict=True)
+    """, params, as_dict=True)
 
     return data
