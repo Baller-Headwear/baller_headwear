@@ -47,8 +47,8 @@ def get_data(filters):
             SELECT b.name AS bom_name,
             b.item AS top_item
             FROM `tabBOM` b
-            JOIN `tabItem` t ON b.item = t.name
-            WHERE b.is_active = 1 AND b.is_default = 1
+            JOIN `tabItem` t ON b.item = t.name 
+            WHERE b.is_active = 1 AND b.is_default = 1 AND t.item_group IN ('Trucker Cap', 'CAP')
             UNION ALL
             SELECT child_bom.name, bt.top_item
             FROM `tabBOM Item` bi
