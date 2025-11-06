@@ -15,10 +15,11 @@ def get_columns():
         {"label": "Request Item Code", "fieldname": "raw_material_item", "fieldtype": "Link", "options": "Item", "width": 140},
         {"label": "Request Item Name", "fieldname": "raw_material_item_name", "fieldtype": "Link", "options": "Item", "width": 140},
         {"label": "UOM", "fieldname": "stock_uom", "fieldtype": "Data", "width": 60},
+        {"label": "Manufactured Qty", "fieldname": "produced_qty", "fieldtype": "Float", "width": 130},
         {"label": "Theoretical Qty (BOM)", "fieldname": "theoretical_qty", "fieldtype": "Float", "width": 130},
         {"label": "Actual Qty (Consumed)", "fieldname": "consumed_qty", "fieldtype": "Float", "width": 130},
         {"label": "Diff Qty", "fieldname": "diff_qty", "fieldtype": "Float", "width": 100},
-        {"label": "Required Qty", "fieldname": "required_qty", "fieldtype": "Float", "width": 130},
+        # {"label": "Required Qty", "fieldname": "required_qty", "fieldtype": "Float", "width": 130},
         {"label": "Transferred Qty", "fieldname": "transferred_qty", "fieldtype": "Float", "width": 130}
     ]
 
@@ -49,13 +50,14 @@ def get_data(filters):
             wo.bom_no,
             wo.actual_start_date,
             wo.status,
+            wo.produced_qty,
             bei.item_code AS raw_material_item,
             i.item_name AS raw_material_item_name,
             bei.stock_uom,
             ROUND(bei.stock_qty * wo.qty, 6) AS theoretical_qty,
             woItem.consumed_qty,
             ROUND(woItem.consumed_qty - (bei.stock_qty * wo.qty), 6) AS diff_qty,
-            woItem.required_qty,
+            # woItem.required_qty,
             woItem.transferred_qty
         FROM `tabWork Order` wo
         JOIN `tabBOM Explosion Item` bei ON bei.parent = wo.bom_no
