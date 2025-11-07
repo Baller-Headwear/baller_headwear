@@ -1,6 +1,7 @@
 import frappe
 from erpnext.manufacturing.doctype.bom.bom import get_bom_items_as_dict
-from frappe.utils import get_datetime, formatdate
+from frappe.utils import get_datetime
+from frappe.utils import format_datetime
 
 def execute(filters=None):
     columns = get_columns()
@@ -9,47 +10,62 @@ def execute(filters=None):
     to_date = get_datetime(filters.to_date + " 23:59:59")
     fg_item = filters.get('fg_item')
 
-    conditions = ""
-
-    if from_date and to_date:
-        conditions += " AND wo.actual_start_date BETWEEN %(from_date)s AND %(to_date)s "
-
-    if not conditions:
+    if not from_date:
         return
 
-    work_order_filter = {
-        "docstatus": 1,  
-        "status": ["in", ["In Process", "Completed"]],
-        "actual_start_date": ["between", [from_date, to_date]]
+    if not to_date:
+        return
+    
+    filters = {
+        "from_date": from_date,
+        "to_date": to_date,
     }
 
-    if fg_item: 
-        work_order_filter = {
-            "docstatus": 1,
-            'production_item':fg_item, 
-            "status": ["in", ["In Process", "Completed"]],
-            "actual_start_date": ["between", [from_date, to_date]]
-        }
+    query = """
+        SELECT 
+            wo.name, wo.bom_no, wo.qty, wo.status,
+            wo.actual_start_date, wo.produced_qty, wo.production_item
+        FROM `tabWork Order` wo
+        JOIN `tabItem` i ON i.name = wo.production_item
+        WHERE wo.docstatus = 1
+        AND wo.status IN ('In Process', 'Completed')
+        AND wo.actual_start_date BETWEEN %(from_date)s AND %(to_date)s
+        AND wo.produced_qty > 0
+        AND i.item_group IN ('CAP', 'Trucker Cap')
+    """
 
-    work_orders = frappe.get_all("Work Order", 
-        filters=work_order_filter, 
-        fields=["name", "bom_no", "qty", "status", "actual_start_date", "produced_qty", "production_item"]
-    )
+    if fg_item:
+        query += " AND wo.production_item = %(fg_item)s"
+        filters["fg_item"] = fg_item
+
+    work_orders = frappe.db.sql(query, filters, as_dict=True)
 
     for wo in work_orders:
         root_item = wo.production_item
+        child_boms = get_child_boms(wo.production_item)
+        work_orders_in_tree = frappe.get_all(
+            "Work Order",
+            filters={"bom_no": ["in", child_boms], "docstatus": 1},
+            pluck="name"
+        )
+
+        if not work_orders_in_tree:
+            continue
+
         bom_items = get_bom_items_as_dict(wo.bom_no, wo.qty)
         bom_item_codes = list(bom_items.keys())
 
         actual_items = frappe.db.sql("""
-            SELECT sti.item_code, SUM(sti.qty) AS actual_qty, sti.uom
+            SELECT ste.name as stock_code, sti.item_code, SUM(sti.qty) AS actual_qty, sti.uom
             FROM `tabStock Entry` ste
             JOIN `tabStock Entry Detail` sti ON sti.parent = ste.name
+            JOIN `tabItem` i ON i.name = sti.item_code
             WHERE ste.docstatus = 1
-              AND ste.work_order = %s
-              AND ste.purpose IN ('Material Transfer for Manufacture')
+            AND ste.work_order IN %(work_orders)s
+            AND i.item_group NOT IN ('Semi-finished')
+            AND ste.purpose IN ('Material Transfer for Manufacture')
             GROUP BY sti.item_code
-        """, wo.name, as_dict=True)
+        """, {"work_orders": tuple(work_orders_in_tree)}, as_dict=True)
 
         actual_map = {a.item_code: a.actual_qty for a in actual_items}
 
@@ -61,7 +77,7 @@ def execute(filters=None):
             data.append({
                 "root_item": root_item,
                 "work_order": wo.name,
-                "actual_start_date": formatdate(wo.actual_start_date, 'dd-mm-yyyy'),
+                "actual_start_date": format_datetime(wo.actual_start_date, 'dd-MM-yyyy HH:mm'),
                 "item_code": item_code,
                 "uom": item.stock_uom,
                 "produced_qty": wo.produced_qty,
@@ -80,7 +96,7 @@ def execute(filters=None):
                 data.append({
                     "root_item": root_item,
                     "work_order": wo.name,
-                    "actual_start_date": formatdate(wo.actual_start_date, 'dd-mm-yyyy'),
+                    "actual_start_date": format_datetime(wo.actual_start_date, 'dd-MM-yyyy HH:mm'),
                     "item_code": a.item_code,
                     "uom": a.uom,
                     "produced_qty": wo.produced_qty,
@@ -115,3 +131,31 @@ def get_columns():
         # {"label": "Variance %", "fieldname": "variance_pct", "fieldtype": "Percent", "width": 100},
         {"label": "Remark", "fieldname": "remark", "fieldtype": "Data", "width": 150},
     ]
+
+def get_child_boms(root_bom_item):
+    result = frappe.db.sql("""
+        WITH RECURSIVE bom_tree AS (
+            SELECT 
+                b.name AS bom_name,
+                b.item AS top_item
+            FROM `tabBOM` b
+            JOIN `tabItem` t ON b.item = t.name 
+            WHERE 
+                b.item = %(root_bom_item)s
+                AND b.is_active = 1
+                AND b.is_default = 1
+                AND t.item_group IN ('Trucker Cap', 'CAP')
+            UNION ALL
+            SELECT 
+                child_bom.name,
+                bt.top_item
+            FROM `tabBOM Item` bi
+            JOIN `tabBOM` child_bom ON bi.bom_no = child_bom.name
+            JOIN bom_tree bt ON bi.parent = bt.bom_name
+        )
+        SELECT bom_name 
+        FROM bom_tree
+    """, {"root_bom_item": root_bom_item}, as_dict=True)
+
+    return [r.bom_name for r in result]
+
