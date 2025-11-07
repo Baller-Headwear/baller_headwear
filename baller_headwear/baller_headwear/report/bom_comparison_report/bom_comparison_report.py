@@ -54,11 +54,11 @@ def get_data(filters):
             bei.item_code AS raw_material_item,
             i.item_name AS raw_material_item_name,
             bei.stock_uom,
-            ROUND(bei.stock_qty * wo.qty, 6) AS theoretical_qty,
+            ROUND(bei.stock_qty * wo.qty, 3) AS theoretical_qty,
             woItem.consumed_qty,
-            ROUND(woItem.consumed_qty - (bei.stock_qty * wo.qty), 6) AS diff_qty,
             # woItem.required_qty,
-            woItem.transferred_qty
+            woItem.transferred_qty,
+            ROUND(woItem.consumed_qty - (bei.stock_qty * wo.qty), 3) AS diff_qty
         FROM `tabWork Order` wo
         JOIN `tabBOM Explosion Item` bei ON bei.parent = wo.bom_no
         JOIN `tabItem` i ON i.name = bei.item_code
