@@ -82,11 +82,15 @@ def execute(filters=None):
                 "uom": item.stock_uom,
                 "produced_qty": wo.produced_qty,
                 "transferred_qty": actual_qty,
+                "amount": item.rate * bom_total,
                 'work_order_status': wo.status,
                 "bom": wo.bom_no,
                 "item_name": item.item_name,
                 "bom_qty": bom_total,
                 "actual_qty": actual_qty,
+                "unit_price": item.rate,
+                "theoretical_amount": bom_total * item.rate,
+                "actual_amount": actual_qty * item.rate,
                 "variance": variance,
                 "remark": ""
             })
@@ -106,6 +110,9 @@ def execute(filters=None):
                     "item_name": frappe.db.get_value("Item", a.item_code, "item_name"),
                     "bom_qty": 0,
                     "actual_qty": a.actual_qty,
+                    "unit_price": item.rate,
+                    "theoretical_amount": 0,
+                    "actual_amount": actual_qty * item.rate,
                     "variance": a.actual_qty,
                     "remark": "Not in BOM"
                 })
@@ -123,11 +130,14 @@ def get_columns():
         {"label": "Request Item Code", "fieldname": "item_code", "fieldtype": "Data", "width": 150},
         {"label": "Request Item Name", "fieldname": "item_name", "fieldtype": "Data", "width": 200},
         {"label": "UOM", "fieldname": "uom", "fieldtype": "Data", "width": 100},
+        {"label": "Unit Price", "fieldname": "unit_price", "fieldtype": "Float", "width": 120},
         {"label": "Manufactured Qty", "fieldname": "produced_qty", "fieldtype": "Float", "width": 120},
         {"label": "Theoretical Qty (BOM)", "fieldname": "bom_qty", "fieldtype": "Float", "width": 120},
         {"label": "Actual Qty (Consumed)", "fieldname": "actual_qty", "fieldtype": "Float", "width": 120},
         {"label": "Transferred Qty", "fieldname": "transferred_qty", "fieldtype": "Float", "width": 120},
         {"label": "Diff Qty", "fieldname": "variance", "fieldtype": "Float", "width": 120},
+        {"label": "Theoretical Amount", "fieldname": "theoretical_amount", "fieldtype": "Float", "width": 120},
+        {"label": "Actual Amount", "fieldname": "actual_amount", "fieldtype": "Float", "width": 120},
         # {"label": "Variance %", "fieldname": "variance_pct", "fieldtype": "Percent", "width": 100},
         {"label": "Remark", "fieldname": "remark", "fieldtype": "Data", "width": 150},
     ]
