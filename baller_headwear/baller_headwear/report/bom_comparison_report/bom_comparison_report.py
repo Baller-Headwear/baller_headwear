@@ -112,7 +112,7 @@ def execute(filters=None):
                     "actual_qty": a.actual_qty,
                     "unit_price": item.rate,
                     "theoretical_amount": 0,
-                    "actual_amount": actual_qty * item.rate,
+                    "actual_amount": a.actual_qty * item.rate,
                     "variance": a.actual_qty,
                     "remark": "Not in BOM"
                 })
