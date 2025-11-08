@@ -32,6 +32,7 @@ def execute(filters=None):
         AND wo.actual_start_date BETWEEN %(from_date)s AND %(to_date)s
         AND wo.produced_qty > 0
         AND i.item_group IN ('CAP', 'Trucker Cap')
+        ORDER BY wo.actual_start_date DESC
     """
 
     if fg_item:
@@ -62,7 +63,7 @@ def execute(filters=None):
             JOIN `tabItem` i ON i.name = sti.item_code
             WHERE ste.docstatus = 1
             AND ste.work_order IN %(work_orders)s
-            AND i.item_group NOT IN ('Semi-finished')
+        
             AND ste.purpose IN ('Material Transfer for Manufacture')
             GROUP BY sti.item_code
         """, {"work_orders": tuple(work_orders_in_tree)}, as_dict=True)
@@ -130,8 +131,8 @@ def get_columns():
         {"label": "Request Item Code", "fieldname": "item_code", "fieldtype": "Data", "width": 150},
         {"label": "Request Item Name", "fieldname": "item_name", "fieldtype": "Data", "width": 200},
         {"label": "UOM", "fieldname": "uom", "fieldtype": "Data", "width": 100},
-        {"label": "Unit Price", "fieldname": "unit_price", "fieldtype": "Float", "width": 120},
         {"label": "Manufactured Qty", "fieldname": "produced_qty", "fieldtype": "Float", "width": 120},
+        {"label": "Unit Price", "fieldname": "unit_price", "fieldtype": "Float", "width": 120},
         {"label": "Theoretical Qty (BOM)", "fieldname": "bom_qty", "fieldtype": "Float", "width": 120},
         {"label": "Actual Qty (Consumed)", "fieldname": "actual_qty", "fieldtype": "Float", "width": 120},
         {"label": "Transferred Qty", "fieldname": "transferred_qty", "fieldtype": "Float", "width": 120},
