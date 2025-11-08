@@ -63,7 +63,7 @@ def execute(filters=None):
             JOIN `tabItem` i ON i.name = sti.item_code
             WHERE ste.docstatus = 1
             AND ste.work_order IN %(work_orders)s
-        
+            AND i.item_group NOT IN ('Semi-finished')
             AND ste.purpose IN ('Material Transfer for Manufacture')
             GROUP BY sti.item_code
         """, {"work_orders": tuple(work_orders_in_tree)}, as_dict=True)
