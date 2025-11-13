@@ -6,7 +6,6 @@ from frappe.utils import format_datetime
 def execute(filters=None):
     columns = get_columns()
     filter_type = filters.get('filter_type') or 'Root Item'
-
     if filter_type == 'Detail':
         data = get_report_with_child(filters)
     else:
@@ -36,30 +35,28 @@ def get_columns():
         {"label": "Remark", "fieldname": "remark", "fieldtype": "Data", "width": 150},
     ]
 
-def get_child_boms(root_bom_item):
+def get_child_boms(name):
     result = frappe.db.sql("""
         WITH RECURSIVE bom_tree AS (
             SELECT 
                 b.name AS bom_name,
-                b.item AS top_item
-            FROM `tabBOM` b
-            JOIN `tabItem` t ON b.item = t.name 
+                b.item AS item_code
+            FROM `tabWork Order` wo
+            JOIN `tabBOM` b ON wo.bom_no = b.name
             WHERE 
-                b.item = %(root_bom_item)s
-                AND b.is_active = 1
-                AND b.is_default = 1
-                AND t.item_group IN ('Trucker Cap', 'CAP')
+                wo.name = %(name)s
             UNION ALL
             SELECT 
-                child_bom.name,
-                bt.top_item
+                child_bom.name AS bom_name,
+                child_bom.item AS item_code
             FROM `tabBOM Item` bi
             JOIN `tabBOM` child_bom ON bi.bom_no = child_bom.name
             JOIN bom_tree bt ON bi.parent = bt.bom_name
         )
-        SELECT bom_name 
-        FROM bom_tree
-    """, {"root_bom_item": root_bom_item}, as_dict=True)
+        SELECT 
+            bt.bom_name
+        FROM bom_tree bt
+    """, {"name": name}, as_dict=True)
 
     return [r.bom_name for r in result]
 
@@ -67,7 +64,7 @@ def get_report_root_item(filters):
     data = []
     from_date = get_datetime(filters.from_date + " 00:00:00")
     to_date = get_datetime(filters.to_date + " 23:59:59")
-    fg_item = filters.get('fg_item')
+    production_item = filters.get('fg_item')
 
     if not from_date:
         return
@@ -80,7 +77,16 @@ def get_report_root_item(filters):
         "to_date": to_date,
     }
 
-    query = """
+    condition = ""
+    if production_item:
+        condition = " AND wo.production_item = %(production_item)s"
+        filters = {
+            "from_date": from_date,
+            "to_date": to_date,
+            "production_item": production_item
+        }
+
+    query = f"""
         SELECT 
             wo.name, wo.bom_no, wo.qty, wo.status,
             wo.actual_start_date, wo.produced_qty, wo.production_item
@@ -90,19 +96,16 @@ def get_report_root_item(filters):
         AND wo.status IN ('In Process', 'Completed')
         AND wo.actual_start_date BETWEEN %(from_date)s AND %(to_date)s
         AND wo.produced_qty > 0
+        {condition}
         AND i.item_group IN ('CAP', 'Trucker Cap')
         ORDER BY wo.actual_start_date DESC
     """
-
-    if fg_item:
-        query += " AND wo.production_item = %(fg_item)s"
-        filters["fg_item"] = fg_item
 
     work_orders = frappe.db.sql(query, filters, as_dict=True)
 
     for wo in work_orders:
         root_item = wo.production_item
-        child_boms = get_child_boms(wo.production_item)
+        child_boms = get_child_boms(wo.name)
         work_orders_in_tree = frappe.get_all(
             "Work Order",
             filters={"bom_no": ["in", child_boms], "docstatus": 1},
