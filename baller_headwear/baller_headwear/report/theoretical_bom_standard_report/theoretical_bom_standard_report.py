@@ -19,15 +19,8 @@ def get_columns():
         {"label": "Status", "fieldname": "work_order_status", "fieldtype": "Data","width": 120},
         {"label": "Item Code", "fieldname": "item_code", "fieldtype": "Data", "width": 150},
         {"label": "Item Name", "fieldname": "item_name", "fieldtype": "Data", "width": 200},
-        {"label": "UOM", "fieldname": "uom", "fieldtype": "Data", "width": 100},
-        # {"label": "Manufactured Qty", "fieldname": "produced_qty", "fieldtype": "Float", "width": 120},
-        # {"label": "Unit Price", "fieldname": "unit_price", "fieldtype": "Float", "width": 120},
-        {"label": "Theoretical Qty (BOM)", "fieldname": "bom_qty", "fieldtype": "Float", "width": 120},
-        # {"label": "Actual Qty (Consumed)", "fieldname": "actual_qty", "fieldtype": "Float", "width": 120},
-        # {"label": "Transferred Qty", "fieldname": "transferred_qty", "fieldtype": "Float", "width": 120},
-        # {"label": "Diff Qty", "fieldname": "variance", "fieldtype": "Float", "width": 120},
-        # {"label": "Theoretical Amount", "fieldname": "theoretical_amount", "fieldtype": "Float", "width": 120},
-        # {"label": "Actual Amount", "fieldname": "actual_amount", "fieldtype": "Float", "width": 120},
+        {"label": "Stock Uom", "fieldname": "uom", "fieldtype": "Data", "width": 100},
+        {"label": "Qty", "fieldname": "bom_qty", "fieldtype": "Float", "width": 120},
         {"label": "Remark", "fieldname": "remark", "fieldtype": "Data", "width": 150},
     ]
 
