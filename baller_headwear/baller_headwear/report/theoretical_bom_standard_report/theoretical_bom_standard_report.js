@@ -4,13 +4,13 @@ frappe.query_reports["Theoretical BOM Standard Report"] = {
             "fieldname": "from_date",
             "label": __("From Date"),
             "fieldtype": "Date",
-            default: frappe.datetime.add_months(frappe.datetime.get_today(), -1)
+            default: ""
         },
         {
             "fieldname": "to_date",
             "label": __("To Date"),
             "fieldtype": "Date",
-            default: frappe.datetime.get_today()
+            default: ""
         },
         {
             "fieldname": "fg_item",
