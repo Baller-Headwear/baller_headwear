@@ -87,7 +87,6 @@ def get_report_root_item(filters):
         WHERE wo.docstatus = 1
         AND wo.status IN ('In Process', 'Completed')
         AND wo.actual_start_date BETWEEN %(from_date)s AND %(to_date)s
-        AND wo.produced_qty > 0
         {condition}
         AND i.item_group IN ('CAP', 'Trucker Cap')
         ORDER BY wo.actual_start_date DESC
