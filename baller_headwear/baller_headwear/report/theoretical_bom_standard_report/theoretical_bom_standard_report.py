@@ -79,7 +79,7 @@ def get_report_root_item(filters):
         }
 
     query = f"""
-        SELECT 
+        SELECT
             wo.name, wo.bom_no, wo.qty, wo.status,
             wo.actual_start_date, wo.produced_qty, wo.production_item
         FROM `tabWork Order` wo
@@ -88,7 +88,8 @@ def get_report_root_item(filters):
         AND wo.status IN ('In Process', 'Completed')
         AND wo.actual_start_date BETWEEN %(from_date)s AND %(to_date)s
         {condition}
-        AND i.item_group IN ('CAP', 'Trucker Cap')
+        AND i.item_group IN ('CAP', 'Trucker Cap', 'Stubby Cooler')
+        GROUP BY wo.name, wo.production_item
         ORDER BY wo.actual_start_date DESC
     """
 
@@ -96,15 +97,15 @@ def get_report_root_item(filters):
 
     for wo in work_orders:
         root_item = wo.production_item
-        child_boms = get_child_boms(wo.name)
-        work_orders_in_tree = frappe.get_all(
-            "Work Order",
-            filters={"bom_no": ["in", child_boms], "docstatus": 1},
-            pluck="name"
-        )
+        # child_boms = get_child_boms(wo.name)
+        # work_orders_in_tree = frappe.get_all(
+        #     "Work Order",
+        #     filters={"bom_no": ["in", child_boms], "docstatus": 1},
+        #     pluck="name"
+        # )
 
-        if not work_orders_in_tree:
-            continue
+        # if not work_orders_in_tree:
+        #     continue
 
         bom_items = get_bom_items_as_dict(wo.bom_no, wo.qty)
 
