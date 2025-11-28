@@ -78,6 +78,45 @@ def get_report_root_item(filters):
             "production_item": production_item
         }
 
+    filter_query = f"""
+        SELECT 
+            wo.production_item,
+            wo.name,
+            wo.bom_no,
+            wo.qty,
+            wo.status,
+            wo.actual_start_date,
+            wo.produced_qty
+        FROM `tabWork Order` wo
+        WHERE wo.docstatus = 1
+        AND wo.status IN ('In Process', 'Completed')
+        AND wo.actual_start_date BETWEEN '2025-10-01' AND '2025-10-31'
+        AND wo.production_item IN (
+            SELECT wo2.production_item
+            FROM `tabWork Order` wo2
+            JOIN `tabItem` i2 ON i2.name = wo2.production_item
+            WHERE wo2.docstatus = 1
+                AND wo2.status IN ('In Process', 'Completed')
+                AND wo2.actual_start_date BETWEEN '2025-10-01' AND '2025-10-31'
+                AND i2.item_group IN ('CAP', 'Trucker Cap', 'Stubby Cooler')
+            GROUP BY wo2.production_item
+            HAVING COUNT(DISTINCT wo2.name) = 2
+        )
+        group by bom_no 
+        ORDER BY wo.production_item, wo.name
+    """
+    work_order_filters = frappe.db.sql(filter_query, as_dict=True)
+    work_order_not_show = [r.name for r in work_order_filters]
+
+    if work_order_not_show:
+        condition = " AND wo.name NOT IN %(exclude)s"
+        filters = {
+            "from_date": from_date,
+            "to_date": to_date,
+            "production_item": production_item,
+            "exclude": work_order_not_show
+        }
+
     query = f"""
         SELECT
             wo.name, wo.bom_no, wo.qty, wo.status,
@@ -89,7 +128,6 @@ def get_report_root_item(filters):
         AND wo.actual_start_date BETWEEN %(from_date)s AND %(to_date)s
         {condition}
         AND i.item_group IN ('CAP', 'Trucker Cap', 'Stubby Cooler')
-        GROUP BY wo.name, wo.production_item
         ORDER BY wo.actual_start_date DESC
     """
 
@@ -97,16 +135,6 @@ def get_report_root_item(filters):
 
     for wo in work_orders:
         root_item = wo.production_item
-        # child_boms = get_child_boms(wo.name)
-        # work_orders_in_tree = frappe.get_all(
-        #     "Work Order",
-        #     filters={"bom_no": ["in", child_boms], "docstatus": 1},
-        #     pluck="name"
-        # )
-
-        # if not work_orders_in_tree:
-        #     continue
-
         bom_items = get_bom_items_as_dict(wo.bom_no, wo.qty)
 
         for item_code, item in bom_items.items():
