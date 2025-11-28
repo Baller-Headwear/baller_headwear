@@ -90,14 +90,14 @@ def get_report_root_item(filters):
         FROM `tabWork Order` wo
         WHERE wo.docstatus = 1
         AND wo.status IN ('In Process', 'Completed')
-        AND wo.actual_start_date BETWEEN '2025-10-01' AND '2025-10-31'
+        AND wo.actual_start_date BETWEEN %(from_date)s AND %(to_date)s
         AND wo.production_item IN (
             SELECT wo2.production_item
             FROM `tabWork Order` wo2
             JOIN `tabItem` i2 ON i2.name = wo2.production_item
             WHERE wo2.docstatus = 1
                 AND wo2.status IN ('In Process', 'Completed')
-                AND wo2.actual_start_date BETWEEN '2025-10-01' AND '2025-10-31'
+                AND wo2.actual_start_date BETWEEN %(from_date)s AND %(to_date)s
                 AND i2.item_group IN ('CAP', 'Trucker Cap', 'Stubby Cooler')
             GROUP BY wo2.production_item
             HAVING COUNT(DISTINCT wo2.name) = 2
@@ -105,7 +105,7 @@ def get_report_root_item(filters):
         group by bom_no 
         ORDER BY wo.production_item, wo.name
     """
-    work_order_filters = frappe.db.sql(filter_query, as_dict=True)
+    work_order_filters = frappe.db.sql(filter_query, filters, as_dict=True)
     work_order_not_show = [r.name for r in work_order_filters]
 
     if work_order_not_show:
