@@ -258,13 +258,11 @@ def set_custom_id_fields_for_posting_date_jv(doc, method):
 def set_custom_id_fields_for_posting_date_payment_entry(doc, method):
     company_settings = frappe.get_doc("Company Settings")
     if doc.posting_date:
-
-        posting_date = datetime.strptime(doc.posting_date, '%Y-%m-%d')
-
+        posting_date = doc.posting_date
+        if isinstance(doc.posting_date, str):
+            posting_date = datetime.strptime(doc.posting_date, '%Y-%m-%d')
         month = posting_date.month
         year = posting_date.year
-        
-
         year_formatted = str(year)[-2:]  
         month_formatted = f"{month:02d}" 
         
