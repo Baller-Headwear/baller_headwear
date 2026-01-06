@@ -252,7 +252,7 @@ def set_custom_id_fields_for_posting_date_jv(doc, method):
         elif doc.company == company_settings.vietnam_company_name:
             doc.naming_series = ".{custom_abbr}.-JV-.{custom_id_year}.-.{custom_id_month}.-.####"
         else:
-            doc.naming_series = "ACC-JV-.YYYY.-"
+            doc.naming_series = "ACC-JV-" + str(year) + '-'
             
 @frappe.whitelist()
 def set_custom_id_fields_for_posting_date_payment_entry(doc, method):
