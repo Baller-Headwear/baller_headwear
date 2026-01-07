@@ -136,6 +136,9 @@ def set_custom_id_fields_for_transaction_date(doc, method):
 
         doc.custom_id_month = month_formatted
         doc.custom_id_year = year_formatted
+        naming_series = doc.naming_series
+        if doc.naming_series:
+            doc.naming_series = naming_series.replace("YYYY", str(year))
 
 # @frappe.whitelist()
 # def set_custom_id_fields_for_posting_date(doc, method):
@@ -157,24 +160,24 @@ def set_custom_id_fields_for_transaction_date(doc, method):
 
 @frappe.whitelist()
 def set_custom_id_fields_for_posting_date(doc, method):
-
     if doc.posting_date:
         if isinstance(doc.posting_date, str):
             posting_date = datetime.strptime(doc.posting_date, '%Y-%m-%d')
         else:
             posting_date = doc.posting_date
 
-
         month = posting_date.month
         year = posting_date.year
-        
-
         year_formatted = str(year)[-2:]  
-        month_formatted = f"{month:02d}" 
-        
-
+        month_formatted = f"{month:02d}"
         doc.custom_id_month = month_formatted
         doc.custom_id_year = year_formatted
+
+        naming_series = doc.naming_series
+        if doc.naming_series:
+            doc.naming_series = naming_series.replace("YYYY", str(year))
+             
+
 
 def parse_date(date_input):
     if date_input is None:
@@ -275,7 +278,7 @@ def set_custom_id_fields_for_posting_date_payment_entry(doc, method):
         elif doc.company == company_settings.vietnam_company_name:
             doc.naming_series = ".{custom_abbr}.-PAY-.{custom_id_year}.-.{custom_id_month}.-.####"
         else:
-            doc.naming_series = "ACC-PAY-.YYYY.-"
+            doc.naming_series = "ACC-PAY-" + str(year) + '-'
 
 @frappe.whitelist()
 def set_custom_id_fields_for_asset(doc, method):
@@ -307,7 +310,7 @@ def set_custom_id_fields_for_asset(doc, method):
         elif doc.company == company_settings.vietnam_company_name:
             doc.naming_series = ".{custom_abbr}.-ASS-.{custom_id_year}.-.{custom_id_month}.-.####"
         else:
-            doc.naming_series = "ACC-ASS-.YYYY.-"
+            doc.naming_series = "ACC-ASS-" + str(year) + '-'
 
 
 @frappe.whitelist()
