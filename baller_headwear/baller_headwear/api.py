@@ -12,6 +12,12 @@ from erpnext.controllers.buying_controller import BuyingController
 from erpnext.manufacturing.doctype.work_order.work_order import get_item_details
 from erpnext.stock.doctype.item.item import get_item_defaults
 from erpnext.stock.stock_balance import get_indented_qty, update_bin_qty
+import sys
+from frappe.utils import now_datetime
+from datetime import datetime, timedelta
+from frappe.utils import format_time
+from openpyxl import load_workbook
+import os
 
 @frappe.whitelist()
 def make_stock_entry(source_name, target_doc=None):
@@ -388,3 +394,357 @@ def get_work_orders_for_cutting(from_date=None, to_date=None, item=None):
 #     return result
 
 
+def fmt_date(d):
+    return d.strftime("%Y-%m-%d") if isinstance(d, datetime) else None
+
+def fmt_time(t):
+    new_time = t
+    if isinstance(t, datetime):
+        new_time = t.strftime("%H:%M:%S")
+    if isinstance(t, str):
+        new_time = datetime.strptime(t, "%I:%M:%S %p").strftime("%H:%M:%S")
+    return new_time
+
+
+def process_bulk(item_list, item_list_new, item_map):
+    from erpnext.manufacturing.doctype.work_order.work_order import make_stock_entry
+    from erpnext.stock.doctype.stock_entry.stock_entry import get_warehouse_details
+    for item in item_list:
+        item_code = item.get('product_code')
+        work_orders = frappe.get_all(
+            "Work Order",
+            filters={
+                "production_item": ["like", f"%{item_code}%"],
+                "status": ["!=", "Completed"],
+            },
+            fields= [
+                "name",
+                "status",
+                "bom_no",
+                "qty",
+                "production_item",
+                "material_transferred_for_manufacturing",
+                "produced_qty",
+                "planned_start_date",
+                "planned_end_date"
+            ]
+        )
+
+        priority_wos = []
+        normal_wos = []
+        for wo in work_orders:
+            item_group = frappe.db.get_value(
+                "Item",
+                wo['production_item'],
+                "item_group"
+            )
+
+            if item_group != 'Semi-finished':
+                continue
+
+            count = frappe.db.sql("""
+                SELECT COUNT(woi.name)
+                FROM `tabWork Order Item` woi
+                INNER JOIN `tabItem` i ON i.name = woi.item_code
+                WHERE woi.parent = %s
+            """, (wo.name))[0][0]
+
+            count_diff_semi = frappe.db.sql(
+                """
+                SELECT COUNT(woi.name)
+                FROM `tabWork Order Item` woi
+                INNER JOIN `tabItem` i ON i.name = woi.item_code
+                WHERE woi.parent = %s
+                AND i.item_group != %s
+                """,
+                (wo.name, "Semi-finished")
+            )[0][0]
+
+            if count_diff_semi > 0:
+                wo.required_items_count = count
+                priority_wos.append(wo)
+            elif count > 1:
+                priority_wos.append(wo)
+            else:
+                normal_wos.append(wo)
+
+        for wo in priority_wos:
+            wo_in_new_list = item_map.get(wo.name)
+            if not wo_in_new_list:
+                continue
+            try:
+                resp = make_stock_entry(wo.name, 'Material Transfer for Manufacture', 0)
+                stock_entry_items = resp['items']
+                if not stock_entry_items:
+                    continue
+                
+                for stock_item in stock_entry_items:
+                    item_group = frappe.db.get_value(
+                        "Item",
+                        stock_item['item_code'],
+                        "item_group"
+                    )
+                    stock_item.s_warehouse = 'Main Store - BHV'
+                    if stock_item['item_code'] == 'Piping 3.0-9672-135':
+                        stock_item.item_code = 'Piping 2.9-9672-135'
+
+                    if item_group == 'Semi-finished':
+                        stock_item.s_warehouse = 'Semi-finished Goods  - BHV'
+                        
+                        args = {
+                                "item_code":stock_item['item_code'],
+                                "warehouse":"Semi-finished Goods  - BHV",
+                                "transfer_qty":stock_item['qty'],
+                                "serial_and_batch_bundle":None,
+                                "qty":(0-stock_item['qty']),
+                                "posting_date":wo_in_new_list.get('posting_date'),
+                                "posting_time":wo_in_new_list.get('posting_time'),
+                                "company":"Baller Headwear Vietnam Ltd",
+                                "voucher_type":"Stock Entry",
+                                "voucher_no":"new-stock-entry-detail-mpfrecxxiz",
+                                "allow_zero_valuation":1
+                            }
+                        result = get_warehouse_details(args)
+                        stock_item.basic_rate = result.get("basic_rate")
+                
+                doc = frappe.get_doc(resp)  
+                doc.set_posting_time = 1
+                doc.fg_completed_qty = 0
+                doc.posting_date = wo_in_new_list.get('posting_date')
+                doc.posting_time = wo_in_new_list.get('posting_time')
+                doc.insert(ignore_permissions=True)
+                doc.submit()
+                frappe.db.commit()
+            except frappe.ValidationError:
+                frappe.db.rollback()
+                continue
+            except Exception as e:
+                frappe.db.rollback()
+                continue
+
+        for wo in priority_wos:
+            wo_in_new_list = item_map.get(wo.name)
+            if not wo_in_new_list:
+                continue
+            try:
+                resp = make_stock_entry(wo.name, 'Manufacture', wo.qty)
+                doc = frappe.get_doc(resp)  
+                doc.set_posting_time = 1
+                doc.posting_date = wo_in_new_list.get('posting_date')
+                doc.posting_time = wo_in_new_list.get('posting_time')
+                doc.insert(ignore_permissions=True)
+                doc.submit()
+                frappe.db.commit()
+            except frappe.ValidationError:
+                frappe.db.rollback()
+                print("ERROR Manufacture",  wo.name)
+                print("WO", wo.name, 'posting_date', wo_in_new_list.get('posting_date'), 'posting_time', wo_in_new_list.get('posting_time'))
+                continue
+            except Exception as e:
+                frappe.db.rollback()
+                print("WO", wo.name, 'posting_date', item.get('posting_date'), 'posting_time', item.get('posting_time'))
+                continue
+
+        for wo in normal_wos:
+            wo_in_new_list = item_map.get(wo.name)
+            if not wo_in_new_list:
+                continue
+            try:
+                resp = make_stock_entry(wo.name, 'Material Transfer for Manufacture', 0)
+                stock_entry_items = resp['items']
+                if not stock_entry_items:
+                    continue
+                for stock_item in stock_entry_items:
+                    item_group = frappe.db.get_value(
+                        "Item",
+                        stock_item['item_code'],
+                        "item_group"
+                    )
+                    stock_item.s_warehouse = 'Main Store - BHV'
+                    if stock_item['item_code'] == 'Piping 3.0-9672-135':
+                        stock_item.item_code = 'Piping 2.9-9672-135'
+
+                    if item_group == 'Semi-finished':
+                        stock_item.s_warehouse = 'Semi-finished Goods  - BHV'
+                        
+                        args = {
+                                "item_code":stock_item['item_code'],
+                                "warehouse":"Semi-finished Goods  - BHV",
+                                "transfer_qty":stock_item['qty'],
+                                "serial_and_batch_bundle":None,
+                                "qty":(0-stock_item['qty']),
+                                "posting_date":wo_in_new_list.get('posting_date'),
+                                "posting_time":wo_in_new_list.get('posting_time'),
+                                "company":"Baller Headwear Vietnam Ltd",
+                                "voucher_type":"Stock Entry",
+                                "voucher_no":"new-stock-entry-detail-mpfrecxxiz",
+                                "allow_zero_valuation":1
+                            }
+                        result = get_warehouse_details(args)
+                        stock_item.basic_rate = result.get("basic_rate")
+                
+                doc = frappe.get_doc(resp)  
+                doc.set_posting_time = 1
+                doc.fg_completed_qty = 0
+                doc.posting_date = wo_in_new_list.get('posting_date')
+                doc.posting_time = wo_in_new_list.get('posting_time')
+                doc.insert(ignore_permissions=True)
+                doc.submit()
+                frappe.db.commit()
+            except frappe.ValidationError:
+                frappe.db.rollback()
+                print("ERROR Material Transfer for Manufacture",  wo.name)
+                print("WO", wo.name, 'posting_date', wo_in_new_list.get('posting_date'), 'posting_time', wo_in_new_list.get('posting_time'))
+                continue
+            except Exception as e:
+                frappe.db.rollback()
+                print("WO", wo.name, 'posting_date', item.get('posting_date'), 'posting_time', item.get('posting_time'))
+                continue
+
+        for wo in normal_wos:
+            wo_in_new_list = item_map.get(wo.name)
+            if not wo_in_new_list:
+                continue
+            try:
+                resp = make_stock_entry(wo.name, 'Manufacture', wo.qty)
+                doc = frappe.get_doc(resp)  
+                doc.set_posting_time = 1
+                doc.posting_date = wo_in_new_list.get('posting_date')
+                doc.posting_time = wo_in_new_list.get('posting_time')
+                doc.insert(ignore_permissions=True)
+                doc.submit()
+                frappe.db.commit()
+            except frappe.ValidationError:
+                frappe.db.rollback()
+                continue
+            except Exception as e:
+                frappe.db.rollback()
+                continue
+
+
+    for item in item_list:
+        item_code = item.get('product_code')
+        work_orders = frappe.get_all(
+            "Work Order",
+            filters={
+                "production_item": ["like", f"{item_code}%"],
+                "status": ["!=", "Completed"],
+            },
+            fields= [
+                "name",
+                "status",
+                "bom_no",
+                "qty",
+                "production_item",
+                "material_transferred_for_manufacturing",
+                "produced_qty",
+                "planned_start_date",
+                "planned_end_date"
+            ]
+        )
+
+        for wo in work_orders:
+            wo_in_new_list = item_map.get(wo.name)
+            if not wo_in_new_list:
+                continue
+            try:
+                resp = make_stock_entry(wo.name, 'Material Transfer for Manufacture', 0)
+                stock_entry_items = resp['items']
+                if not stock_entry_items:
+                    continue
+                for stock_item in stock_entry_items:
+                    item_group = frappe.db.get_value(
+                        "Item",
+                        stock_item['item_code'],
+                        "item_group"
+                    )
+                    stock_item.s_warehouse = 'Main Store - BHV'
+                    if stock_item['item_code'] == 'Piping 3.0-9672-135':
+                        stock_item.item_code = 'Piping 2.9-9672-135'
+
+                    if item_group == 'Semi-finished':
+                        stock_item.s_warehouse = 'Semi-finished Goods  - BHV'
+                        
+                        args = {
+                                "item_code":stock_item['item_code'],
+                                "warehouse":"Semi-finished Goods  - BHV",
+                                "transfer_qty":stock_item['qty'],
+                                "serial_and_batch_bundle":None,
+                                "qty":(0-stock_item['qty']),
+                                "posting_date":wo_in_new_list.get('posting_date'),
+                                "posting_time":wo_in_new_list.get('posting_time'),
+                                "company":"Baller Headwear Vietnam Ltd",
+                                "voucher_type":"Stock Entry",
+                                "voucher_no":"new-stock-entry-detail-mpfrecxxiz",
+                                "allow_zero_valuation":1
+                            }
+                        result = get_warehouse_details(args)
+                        stock_item.basic_rate = result.get("basic_rate")
+                
+                doc = frappe.get_doc(resp)  
+                doc.set_posting_time = 1
+                doc.fg_completed_qty = 0
+                doc.posting_date = wo_in_new_list.get('posting_date')
+                doc.posting_time = wo_in_new_list.get('posting_time')
+                doc.insert(ignore_permissions=True)
+                doc.submit()
+                frappe.db.commit()
+            except frappe.ValidationError:
+                frappe.db.rollback()
+                print("ERROR Material Transfer for Manufacture",  wo.name)
+                print("WO", wo.name, 'posting_date', wo_in_new_list.get('posting_date'), 'posting_time', wo_in_new_list.get('posting_time'))
+                continue
+            except Exception as e:
+                frappe.db.rollback()
+                print("WO", wo.name, 'posting_date', item.get('posting_date'), 'posting_time', item.get('posting_time'))
+                continue
+
+        for wo in work_orders:
+            wo_in_new_list = item_map.get(wo.name)
+            if not wo_in_new_list:
+                continue
+            try:
+                resp = make_stock_entry(wo.name, 'Manufacture', wo.qty)
+                doc = frappe.get_doc(resp)  
+                doc.set_posting_time = 1
+                doc.posting_date = wo_in_new_list.get('posting_date')
+                doc.posting_time = wo_in_new_list.get('posting_time')
+                doc.insert(ignore_permissions=True)
+                doc.submit()
+                frappe.db.commit()
+            except frappe.ValidationError:
+                frappe.db.rollback()
+                print("ERROR Manufacture",  wo.name)
+                print("WO", wo.name, 'posting_date', wo_in_new_list.get('posting_date'), 'posting_time', wo_in_new_list.get('posting_time'))
+                continue
+            except Exception as e:
+                frappe.db.rollback()
+                print("WO", wo.name, 'posting_date', item.get('posting_date'), 'posting_time', item.get('posting_time'))
+                continue
+    
+@frappe.whitelist(allow_guest=True)
+def run_job():
+    data_not_dup_rows = frappe.db.sql("""
+        SELECT DISTINCT product_code
+        FROM `Auto Complete Wo Jobs`
+    """, as_dict=True)
+
+    data_rows = frappe.db.sql("""
+        SELECT *
+        FROM `Auto Complete Wo Jobs`
+    """, as_dict=True)
+
+    item_list = data_not_dup_rows
+    item_list_new = data_rows
+    item_map = {item["wo"]: item for item in item_list_new}
+    BATCH_SIZE = 3
+    for i in range(0, len(item_list), BATCH_SIZE):
+        batch = item_list[i:i + BATCH_SIZE]
+        frappe.enqueue(
+            "baller_headwear.baller_headwear.api.process_bulk",
+            queue="long",
+            timeout=3600,
+            item_list=batch,
+            item_map=item_map,
+            item_list_new=item_list_new
+        )
