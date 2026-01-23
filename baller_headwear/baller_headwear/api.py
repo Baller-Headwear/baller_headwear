@@ -726,12 +726,12 @@ def process_bulk(item_list, item_list_new, item_map):
 def run_job():
     data_not_dup_rows = frappe.db.sql("""
         SELECT DISTINCT product_code
-        FROM `Auto Complete Wo Jobs`
+        FROM `tabAuto Complete Wo Jobs`
     """, as_dict=True)
 
     data_rows = frappe.db.sql("""
         SELECT *
-        FROM `Auto Complete Wo Jobs`
+        FROM `tabAuto Complete Wo Jobs`
     """, as_dict=True)
 
     item_list = data_not_dup_rows
