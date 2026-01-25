@@ -18,6 +18,7 @@ from datetime import datetime, timedelta
 from frappe.utils import format_time
 from openpyxl import load_workbook
 import os
+import re
 
 @frappe.whitelist()
 def make_stock_entry(source_name, target_doc=None):
@@ -747,4 +748,219 @@ def run_job():
             item_list=batch,
             item_map=item_map,
             item_list_new=item_list_new
+        )
+
+def read_file():
+    from openpyxl import load_workbook
+    import re
+    file_path = '/home/son96/works/erp.bellar.15/1313.xlsx'
+    wb = load_workbook(filename=file_path, data_only=True)
+    ws = wb.active   # hoặc wb["Sheet1"]
+    data = []
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        date_raw, item, plan, mfg_raw, qty, completed = row[:6]
+
+        date = date_raw.strftime("%Y-%m-%d") if isinstance(date_raw, datetime) \
+            else datetime.strptime(date_raw, "%d/%m/%Y").strftime("%Y-%m-%d")
+
+        production_plans = [
+            p.strip()
+            for p in re.split(r"[,\n]", str(mfg_raw))
+            if p.strip()
+        ]
+
+        data.append({
+            "date": date,
+            "item_code": str(item).strip(),
+            "plan": str(plan).strip(),
+            "production_plans": production_plans,
+            "qty": int(qty or 0),
+            "completed_qty": int(completed or 0)
+        })
+
+    return data
+
+def process_bulk_melin(new_data):
+    from erpnext.manufacturing.doctype.work_order.work_order import make_stock_entry
+    from erpnext.stock.doctype.stock_entry.stock_entry import get_warehouse_details
+    for item in new_data:
+        item_code = item.get('item_code')
+        qty = item.get('qty')
+        production_plans = item.get('production_plans')
+        if not production_plans:
+            continue
+
+        for plan in production_plans:
+            assembly_items = frappe.db.sql("""
+                SELECT
+                    item_code,
+                    bom_no,
+                    planned_qty,
+                    warehouse
+                FROM `tabProduction Plan Item`
+                WHERE parent = %s
+                AND item_code = %s
+                AND planned_qty = %s
+            """, (plan, item_code, qty), as_dict=True)
+
+            if assembly_items:
+                work_orders = frappe.get_all(
+                    "Work Order",
+                    filters={
+                        "production_plan": plan,
+                        "qty": qty,
+                        "production_item": item_code,
+                        "status": ["!=", "Completed"],
+                    },
+                    fields= [
+                        "name",
+                        "status",
+                        "bom_no",
+                        "qty",
+                        "production_item",
+                        "material_transferred_for_manufacturing",
+                        "produced_qty",
+                        "planned_start_date",
+                        "planned_end_date"
+                    ],
+                    limit=1
+                )
+
+                for wo in work_orders:
+                    try:
+                        resp = make_stock_entry(wo.name, 'Material Transfer for Manufacture', 0)
+                        stock_entry_items = resp['items']
+                        if not stock_entry_items:
+                            continue
+                        for stock_item in stock_entry_items:
+                            item_group = frappe.db.get_value(
+                                "Item",
+                                stock_item['item_code'],
+                                "item_group"
+                            )
+                            stock_item.s_warehouse = 'Main Store - BHV'
+                            if item_group == 'Semi-finished':
+                                stock_item.s_warehouse = 'Semi-finished Goods  - BHV'
+                                
+                                args = {
+                                        "item_code":stock_item['item_code'],
+                                        "warehouse":"Semi-finished Goods  - BHV",
+                                        "transfer_qty":stock_item['qty'],
+                                        "serial_and_batch_bundle":None,
+                                        "qty":(0-stock_item['qty']),
+                                        "posting_date": item.get('posting_date'),
+                                        "posting_time":'10:32',
+                                        "company":"Baller Headwear Vietnam Ltd",
+                                        "voucher_type":"Stock Entry",
+                                        "voucher_no":"new-stock-entry-detail-mpfrecxxiz",
+                                        "allow_zero_valuation":1
+                                    }
+                                result = get_warehouse_details(args)
+                                stock_item.basic_rate = result.get("basic_rate")
+                        
+                        doc = frappe.get_doc(resp)  
+                        doc.set_posting_time = 1
+                        doc.fg_completed_qty = 0
+                        doc.posting_date = item.get('date')
+                        doc.insert(ignore_permissions=True)
+                        doc.submit()
+                        frappe.db.commit()
+                    except frappe.ValidationError as e:
+                        frappe.db.rollback()
+                        message=f"WO: {wo.name}\n{frappe.get_traceback()}"
+                        name = item.get('name')
+
+                        frappe.db.sql("""
+                            UPDATE `tabAuto Melin Wo`
+                            SET error = %s
+                            WHERE name = %s
+                        """, (message, name))
+
+                        frappe.db.commit()
+                        continue
+                    except Exception as e:
+                        frappe.db.rollback()
+                        continue
+
+                for wo in work_orders:
+                    try:
+                        resp = make_stock_entry(wo.name, 'Manufacture', item.get('completed_qty'))
+                        stock_entry_items = frappe.db.sql("""
+                            SELECT
+                                se.name AS stock_entry,
+                                se.posting_date,
+                                se.work_order,
+                                sed.item_code,
+                                sed.qty,
+                                sed.s_warehouse,
+                                sed.t_warehouse,
+                                sed.is_finished_item
+                            FROM `tabStock Entry` se
+                            INNER JOIN `tabStock Entry Detail` sed
+                                ON sed.parent = se.name
+                            WHERE se.work_order = %s
+                            AND sed.item_code = %s
+                            AND se.purpose = 'Manufacture'
+                            AND se.docstatus = 1
+                            ORDER BY se.posting_date DESC
+                        """, (wo.name,), as_dict=True)
+
+                        doc = frappe.get_doc(resp)  
+                        doc.set_posting_time = 1
+                        doc.posting_date = item.get('date')
+                        doc.insert(ignore_permissions=True)
+                        doc.submit()
+                        frappe.db.commit()
+                    except frappe.ValidationError as e:
+                        frappe.db.rollback()
+                        print("ERROR Manufacture",  wo.name)
+                        print(item.get('name'))
+                        message=f"WO: {wo.name}\n{frappe.get_traceback()}"
+                        name = item.get('name')
+
+                        frappe.db.sql("""
+                            UPDATE `tabAuto Melin Wo`
+                            SET error = %s
+                            WHERE name = %s
+                        """, (message, name))
+
+                        frappe.db.commit()
+                        continue
+                    except Exception as e:
+                        frappe.db.rollback()
+                        continue
+
+
+@frappe.whitelist(allow_guest=True)
+def run_melin():
+    data = frappe.db.sql("""
+        SELECT *
+        FROM `tabAuto Melin Wo`
+    """, as_dict=True)
+   
+    new_data = []
+    for item in data:
+        production_plans = [
+            p.strip()
+            for p in re.split(r"[,\n]", str(item.get('production_plans')))
+            if p.strip()
+        ]
+
+        new_data.append({
+            "name": item.get('name'),
+            "date": item.get('date'),
+            "item_code": str(item.get('item_code')).strip(),
+            "production_plans": production_plans,
+            "qty": int(item.get('qty') or 0),
+            "completed_qty": int(item.get('completed_qty') or 0)
+        })
+    
+    BATCH_SIZE = 3
+    for i in range(0, len(new_data), BATCH_SIZE):
+        batch = new_data[i:i + BATCH_SIZE]
+        frappe.enqueue(
+            "baller_headwear.baller_headwear.api.process_bulk_melin",
+            queue="long",
+            timeout=3600,
+            new_data=batch
         )
