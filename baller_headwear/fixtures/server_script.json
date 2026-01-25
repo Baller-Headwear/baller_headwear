@@ -986,5 +986,43 @@
   "reference_doctype": "Material Summary",
   "script": "leftover_summary = frappe.get_doc(\"Left Over Summary\", \"Left Over Summary Record\")  \n\nif not leftover_summary.left_over_table:\n    leftover_summary.left_over_table = []\n    \nexisting_rows = {(r.item_code,r.source_warehouse): r for r in leftover_summary.left_over_table}\n    \nfor row in doc.items:  \n    b_row = existing_rows.get(row.item_code)\n    if not b_row:\n        b_row = leftover_summary.append(\"left_over_table\",{})\n        b_row.item_code = row.item_code\n        b_row.source_warehouse = row.source_warehouse\n\n    b_row.leftover_qty = -row.planned_leftover_qty\n\nleftover_summary.save(ignore_permissions=True)\n",
   "script_type": "DocType Event"
+ },
+ {
+  "allow_guest": 0,
+  "api_method": null,
+  "cron_format": null,
+  "disabled": 1,
+  "docstatus": 0,
+  "doctype": "Server Script",
+  "doctype_event": "Before Save",
+  "enable_rate_limit": 0,
+  "event_frequency": "All",
+  "modified": "2026-01-24 10:43:29.281070",
+  "module": null,
+  "name": "Check Regular Status",
+  "rate_limit_count": 5,
+  "rate_limit_seconds": 86400,
+  "reference_doctype": "Material Request",
+  "script": "# Check if both are checked or both are unchecked\nif doc.is_regular == doc.is_not_regular:\n    frappe.throw(\"You must select either Regular or Not Regular, but not both.\")",
+  "script_type": "DocType Event"
+ },
+ {
+  "allow_guest": 0,
+  "api_method": null,
+  "cron_format": null,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Server Script",
+  "doctype_event": "After Submit",
+  "enable_rate_limit": 0,
+  "event_frequency": "All",
+  "modified": "2026-01-23 20:12:49.059195",
+  "module": null,
+  "name": "Auto Checkin Checkout Script",
+  "rate_limit_count": 5,
+  "rate_limit_seconds": 86400,
+  "reference_doctype": "Leave Application",
+  "script": "if doc.leave_type == \"Leave Without Pay\":\r\n    pass\r\n\r\nelse:\r\n    employee = doc.employee\r\n    if not employee:\r\n        frappe.throw(\"Employee not found in Leave Application.\")\r\n\r\n    shift_type = frappe.db.get_value(\"Employee\", employee, \"default_shift\")\r\n    if not shift_type:\r\n        frappe.throw(f\"Shift Type is not set for Employee {employee}.\")\r\n\r\n    shift = frappe.get_doc(\"Shift Type\", shift_type)\r\n\r\n    if not shift.start_time:\r\n        frappe.throw(f\"Start Time is not defined in Shift Type: {shift_type}.\")\r\n\r\n    if not shift.end_time:\r\n        frappe.throw(f\"End Time is not defined in Shift Type: {shift_type}.\")\r\n\r\n    current_date = frappe.utils.getdate(doc.from_date)\r\n    end_date = frappe.utils.getdate(doc.to_date)\r\n\r\n    if current_date > end_date:\r\n        frappe.throw(\"From Date cannot be greater than To Date in Leave Application.\")\r\n\r\n    while current_date <= end_date:\r\n\r\n        in_time = frappe.utils.get_datetime(\r\n            str(current_date) + \" \" + str(shift.start_time)\r\n        )\r\n\r\n        out_time = frappe.utils.get_datetime(\r\n            str(current_date) + \" \" + str(shift.end_time)\r\n        )\r\n\r\n        in_exists = frappe.db.exists(\r\n            \"Employee Checkin\",\r\n            {\r\n                \"employee\": employee,\r\n                \"log_type\": \"IN\",\r\n                \"time\": in_time\r\n            }\r\n        )\r\n\r\n        out_exists = frappe.db.exists(\r\n            \"Employee Checkin\",\r\n            {\r\n                \"employee\": employee,\r\n                \"log_type\": \"OUT\",\r\n                \"time\": out_time\r\n            }\r\n        )\r\n\r\n        if not in_exists:\r\n            frappe.get_doc({\r\n                \"doctype\": \"Employee Checkin\",\r\n                \"employee\": employee,\r\n                \"log_type\": \"IN\",\r\n                \"time\": in_time,\r\n                \"skip_auto_attendance\": 1\r\n            }).insert(ignore_permissions=True)\r\n\r\n        if not out_exists:\r\n            frappe.get_doc({\r\n                \"doctype\": \"Employee Checkin\",\r\n                \"employee\": employee,\r\n                \"log_type\": \"OUT\",\r\n                \"time\": out_time,\r\n                \"skip_auto_attendance\": 1\r\n            }).insert(ignore_permissions=True)\r\n\r\n        current_date = frappe.utils.add_days(current_date, 1)\r\n",
+  "script_type": "DocType Event"
  }
 ]
