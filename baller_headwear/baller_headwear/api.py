@@ -826,85 +826,65 @@ def process_bulk_melin(new_data):
                     limit=1
                 )
 
-                for wo in work_orders:
-                    try:
-                        resp = make_stock_entry(wo.name, 'Material Transfer for Manufacture', 0)
-                        stock_entry_items = resp['items']
-                        if not stock_entry_items:
-                            continue
-                        for stock_item in stock_entry_items:
-                            item_group = frappe.db.get_value(
-                                "Item",
-                                stock_item['item_code'],
-                                "item_group"
-                            )
-                            stock_item.s_warehouse = 'Main Store - BHV'
-                            if item_group == 'Semi-finished':
-                                stock_item.s_warehouse = 'Semi-finished Goods  - BHV'
+                # for wo in work_orders:
+                #     try:
+                #         resp = make_stock_entry(wo.name, 'Material Transfer for Manufacture', 0)
+                #         stock_entry_items = resp['items']
+                #         if not stock_entry_items:
+                #             continue
+                #         for stock_item in stock_entry_items:
+                #             item_group = frappe.db.get_value(
+                #                 "Item",
+                #                 stock_item['item_code'],
+                #                 "item_group"
+                #             )
+                #             stock_item.s_warehouse = 'Main Store - BHV'
+                #             if item_group == 'Semi-finished':
+                #                 stock_item.s_warehouse = 'Semi-finished Goods  - BHV'
                                 
-                                args = {
-                                        "item_code":stock_item['item_code'],
-                                        "warehouse":"Semi-finished Goods  - BHV",
-                                        "transfer_qty":stock_item['qty'],
-                                        "serial_and_batch_bundle":None,
-                                        "qty":(0-stock_item['qty']),
-                                        "posting_date": item.get('posting_date'),
-                                        "posting_time":'10:32',
-                                        "company":"Baller Headwear Vietnam Ltd",
-                                        "voucher_type":"Stock Entry",
-                                        "voucher_no":"new-stock-entry-detail-mpfrecxxiz",
-                                        "allow_zero_valuation":1
-                                    }
-                                result = get_warehouse_details(args)
-                                stock_item.basic_rate = result.get("basic_rate")
+                #                 args = {
+                #                         "item_code":stock_item['item_code'],
+                #                         "warehouse":"Semi-finished Goods  - BHV",
+                #                         "transfer_qty":stock_item['qty'],
+                #                         "serial_and_batch_bundle":None,
+                #                         "qty":(0-stock_item['qty']),
+                #                         "posting_date": item.get('posting_date'),
+                #                         "posting_time":'10:32',
+                #                         "company":"Baller Headwear Vietnam Ltd",
+                #                         "voucher_type":"Stock Entry",
+                #                         "voucher_no":"new-stock-entry-detail-mpfrecxxiz",
+                #                         "allow_zero_valuation":1
+                #                     }
+                #                 result = get_warehouse_details(args)
+                #                 stock_item.basic_rate = result.get("basic_rate")
                         
-                        doc = frappe.get_doc(resp)  
-                        doc.set_posting_time = 1
-                        doc.fg_completed_qty = 0
-                        doc.posting_date = item.get('date')
-                        doc.insert(ignore_permissions=True)
-                        doc.submit()
-                        frappe.db.commit()
-                    except frappe.ValidationError as e:
-                        frappe.db.rollback()
-                        message=f"WO: {wo.name}\n{frappe.get_traceback()}"
-                        name = item.get('name')
+                #         doc = frappe.get_doc(resp)  
+                #         doc.set_posting_time = 1
+                #         doc.fg_completed_qty = 0
+                #         doc.posting_date = item.get('date')
+                #         doc.insert(ignore_permissions=True)
+                #         doc.submit()
+                #         frappe.db.commit()
+                #     except frappe.ValidationError as e:
+                #         frappe.db.rollback()
+                #         message=f"WO: {wo.name}\n{frappe.get_traceback()}"
+                #         name = item.get('name')
 
-                        frappe.db.sql("""
-                            UPDATE `tabAuto Melin Wo`
-                            SET error = %s
-                            WHERE name = %s
-                        """, (message, name))
+                #         frappe.db.sql("""
+                #             UPDATE `tabAuto Melin Wo`
+                #             SET error = %s
+                #             WHERE name = %s
+                #         """, (message, name))
 
-                        frappe.db.commit()
-                        continue
-                    except Exception as e:
-                        frappe.db.rollback()
-                        continue
+                #         frappe.db.commit()
+                #         continue
+                #     except Exception as e:
+                #         frappe.db.rollback()
+                #         continue
 
                 for wo in work_orders:
                     try:
                         resp = make_stock_entry(wo.name, 'Manufacture', item.get('completed_qty'))
-                        stock_entry_items = frappe.db.sql("""
-                            SELECT
-                                se.name AS stock_entry,
-                                se.posting_date,
-                                se.work_order,
-                                sed.item_code,
-                                sed.qty,
-                                sed.s_warehouse,
-                                sed.t_warehouse,
-                                sed.is_finished_item
-                            FROM `tabStock Entry` se
-                            INNER JOIN `tabStock Entry Detail` sed
-                                ON sed.parent = se.name
-                            WHERE se.work_order = %s
-                            AND sed.item_code = %s
-                            AND se.purpose = 'Manufacture'
-                            AND se.docstatus = 1
-                            ORDER BY se.posting_date DESC
-                        """, (wo.name,), as_dict=True)
-
                         doc = frappe.get_doc(resp)  
                         doc.set_posting_time = 1
                         doc.posting_date = item.get('date')
