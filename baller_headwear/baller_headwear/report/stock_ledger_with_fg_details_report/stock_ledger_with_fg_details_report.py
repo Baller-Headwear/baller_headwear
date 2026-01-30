@@ -54,7 +54,7 @@ def get_data(filters):
             b.item AS top_item
             FROM `tabBOM` b
             JOIN `tabItem` t ON b.item = t.name 
-            WHERE b.is_active = 1 AND b.is_default = 1 AND t.item_group IN ('Trucker Cap', 'CAP')
+            WHERE b.is_active = 1 AND b.is_default = 1 AND t.item_group IN ('Trucker Cap', 'CAP', 'Stubby Cooler')
             UNION ALL
             SELECT child_bom.name, bt.top_item
             FROM `tabBOM Item` bi
@@ -85,7 +85,7 @@ def get_data(filters):
             sle.stock_value AS balance_value
         FROM bom_tree bt
         JOIN `tabWork Order` wo ON bt.bom_name = wo.bom_no
-        JOIN `tabStock Entry` se ON wo.bom_no = se.bom_no
+        JOIN `tabStock Entry` se ON wo.name = se.work_order
         LEFT JOIN `tabStock Entry Detail` sed ON sed.parent = se.name
         LEFT JOIN `tabStock Ledger Entry` sle
             ON sle.item_code = sed.item_code AND sle.voucher_detail_no = sed.name

@@ -1,6 +1,25 @@
 [
  {
   "allow_guest": 0,
+  "api_method": "get_operation_by_routing",
+  "cron_format": null,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Server Script",
+  "doctype_event": "Before Insert",
+  "enable_rate_limit": 0,
+  "event_frequency": "All",
+  "modified": "2026-01-30 11:22:50.373713",
+  "module": null,
+  "name": "Get Operation By Routing",
+  "rate_limit_count": 5,
+  "rate_limit_seconds": 86400,
+  "reference_doctype": null,
+  "script": "\r\nresults = {}\r\nrouting_names = frappe.get_all(\"Routing\", pluck=\"name\")\r\nfor routing in routing_names:\r\n    operations = []\r\n    if routing:\r\n    \tfields = [\r\n    \t\t\"sequence_id\",\r\n    \t\t\"operation\",\r\n    \t\t\"workstation\",\r\n    \t\t\"workstation_type\",\r\n    \t\t\"description\",\r\n    \t\t\"time_in_mins\",\r\n    \t\t\"batch_size\",\r\n    \t\t\"operating_cost\",\r\n    \t\t\"idx\",\r\n    \t\t\"hour_rate\",\r\n    \t\t\"set_cost_based_on_bom_qty\",\r\n    \t\t\"fixed_time\",\r\n    \t]\r\n   \r\n    \tfor row in frappe.get_all(\r\n    \t\t\"BOM Operation\",\r\n    \t\tfields=fields,\r\n    \t\tfilters={\"parenttype\": \"Routing\", \"parent\": routing},\r\n    \t\torder_by=\"sequence_id, idx\",\r\n    \t):\r\n    \t    operations.append(row)\r\n    \t    \r\n    \t    \r\n    \tresults[routing] = operations\r\n\t    \r\nfrappe.response[\"message\"] = results",
+  "script_type": "API"
+ },
+ {
+  "allow_guest": 0,
   "api_method": "set_maintain_stock",
   "cron_format": null,
   "disabled": 0,
