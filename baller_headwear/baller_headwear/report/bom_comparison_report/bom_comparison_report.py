@@ -97,7 +97,7 @@ def get_report_root_item(filters):
         AND wo.actual_start_date BETWEEN %(from_date)s AND %(to_date)s
         AND wo.produced_qty > 0
         {condition}
-        AND i.item_group IN ('CAP', 'Trucker Cap')
+        AND i.item_group IN ('CAP', 'Trucker Cap', 'Bucket Hat', 'Stubby Cooler')
         ORDER BY wo.actual_start_date DESC
     """
 
