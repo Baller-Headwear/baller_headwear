@@ -60,7 +60,7 @@ def get_data_report(filters):
             FROM `tabVersion`
             WHERE ref_doctype = 'Sales Order'
             AND JSON_EXTRACT(data, '$.changed') IS NOT NULL
-            AND JSON_SEARCH(data, 'one', 'base_total') IS NOT NULL
+            AND JSON_SEARCH(data, 'one', 'base_grand_total') IS NOT NULL
             GROUP BY docname
         ) x
         ON v.docname = x.docname

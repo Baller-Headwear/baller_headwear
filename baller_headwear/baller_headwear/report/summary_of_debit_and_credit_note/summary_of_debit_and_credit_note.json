@@ -1,5 +1,5 @@
 {
-  "name": "Sales Price Audit Report",
+  "name": "Summary of Debit and Credit Note",
   "doctype": "Report",
   "is_standard": "Yes",
   "ref_doctype": "Sales Order",
@@ -14,6 +14,9 @@
     },
     {
       "role": "Sales User"
+    },
+    {
+      "role": "Sales Manager"
     },
     {
       "role": "System Manager"

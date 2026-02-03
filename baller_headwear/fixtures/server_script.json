@@ -1,6 +1,25 @@
 [
  {
   "allow_guest": 0,
+  "api_method": null,
+  "cron_format": null,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Server Script",
+  "doctype_event": "After Submit",
+  "enable_rate_limit": 0,
+  "event_frequency": "All",
+  "modified": "2026-02-03 13:13:48.679929",
+  "module": null,
+  "name": "Laser Bonus",
+  "rate_limit_count": 5,
+  "rate_limit_seconds": 86400,
+  "reference_doctype": "Laser Bonus",
+  "script": "for row in doc.laser_bonus_slab:\r\n    if not row.employee or not row.actual_bonus_amount:\r\n        continue\r\n\r\n    exists = frappe.db.exists(\r\n        \"Additional Salary\",\r\n        {\r\n            \"employee\": row.employee,\r\n            \"ref_doctype\": \"Laser Bonus\",\r\n            \"ref_docname\": doc.name\r\n        }\r\n    )\r\n\r\n    if exists:\r\n        frappe.throw(\r\n            f\"Additional Salary already exists for Employee {row.employee}\"\r\n        )\r\n        \r\n    additional_salary = frappe.get_doc({\r\n        \"doctype\": \"Additional Salary\",\r\n        \"employee\": row.employee,\r\n        \"salary_component\": \"Laser Bonus\",\r\n        \"amount\": row.actual_bonus_amount,\r\n        \"company\":row.company,\r\n        \"payroll_date\": doc.payroll_date,\r\n        \"ref_doctype\": \"Laser Bonus\",\r\n        \"ref_docname\": doc.name\r\n    })\r\n\r\n    additional_salary.insert(ignore_permissions=True)\r\n",
+  "script_type": "DocType Event"
+ },
+ {
+  "allow_guest": 0,
   "api_method": "get_operation_by_routing",
   "cron_format": null,
   "disabled": 0,
@@ -731,13 +750,13 @@
   "doctype_event": "Before Save",
   "enable_rate_limit": 0,
   "event_frequency": "All",
-  "modified": "2026-01-06 15:53:27.188882",
+  "modified": "2026-01-31 10:39:12.803731",
   "module": null,
   "name": "Add Routing For Bom Creator",
   "rate_limit_count": 5,
   "rate_limit_seconds": 86400,
   "reference_doctype": "BOM",
-  "script": "if doc.bom_creator:\r\n    bom_creator_routings = frappe.get_all(\r\n        \"Bom Creator Routing\",\r\n        fields=[\"name\", \"item_code\", \"routing\", \"transfer_material_against\"],\r\n        filters={\r\n            \"parent\": doc.bom_creator\r\n        }\r\n    )\r\n    \r\n    bom_creator_items = frappe.get_all(\r\n        \"BOM Creator Item\",\r\n        fields=[\"operation\", \"item_code\"],\r\n        filters={\r\n            \"fg_item\": doc.item,\r\n            \"parent\": doc.bom_creator\r\n        }\r\n    )\r\n    creator_routing= None\r\n    for item in bom_creator_routings:\r\n        if item.item_code == doc.item:\r\n            creator_routing = item\r\n            break\r\n        \r\n    if creator_routing:\r\n        doc.with_operations = 1\r\n        doc.routing = creator_routing.routing\r\n        doc.transfer_material_against = creator_routing.transfer_material_against\r\n        \r\n        for bom_item in doc.items:\r\n            for bom_creator_item in bom_creator_items:\r\n                if bom_item.item_code == bom_creator_item.item_code:\r\n                    bom_item.operation = bom_creator_item.operation\r\n    ",
+  "script": "if doc.bom_creator:\r\n    bom_creator_routings = frappe.get_all(\r\n        \"Bom Creator Routing\",\r\n        fields=[\"name\", \"item_code\", \"routing\", \"transfer_material_against\"],\r\n        filters={\r\n            \"parent\": doc.bom_creator\r\n        }\r\n    )\r\n    \r\n    bom_creator_items = frappe.get_all(\r\n        \"BOM Creator Item\",\r\n        fields=[\"operation\", \"item_code\"],\r\n        filters={\r\n            \"fg_item\": doc.item,\r\n            \"parent\": doc.bom_creator\r\n        }\r\n    )\r\n    creator_routing= None\r\n    for item in bom_creator_routings:\r\n        if not item.routing:\r\n            continue\r\n        \r\n        if item.item_code == doc.item:\r\n            creator_routing = item\r\n            break\r\n\r\n    if creator_routing:\r\n        doc.with_operations = 1\r\n        doc.routing = creator_routing.routing\r\n        value = creator_routing.transfer_material_against\r\n        doc.transfer_material_against = value\r\n        \r\n        if value == 'Job Card':\r\n            for bom_item in doc.items:\r\n                for bom_creator_item in bom_creator_items:\r\n                    if bom_item.item_code == bom_creator_item.item_code:\r\n                        bom_item.operation = bom_creator_item.operation\r\n    ",
   "script_type": "DocType Event"
  },
  {
