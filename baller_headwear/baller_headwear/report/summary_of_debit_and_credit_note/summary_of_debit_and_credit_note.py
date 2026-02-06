@@ -8,6 +8,7 @@ def execute(filters=None):
 
 def get_columns():
     return [
+        {"label": "Preiod", "fieldname": "posting_date", "fieldtype": "Date", "width": 160},
         {"label": "Quotation Number", "fieldname": "quotation", "fieldtype": "Link", "options": "Quotation", "width": 160},
         {"label": "Sales Order", "fieldname": "sales_order", "fieldtype": "Link", "options": "Sales Order", "width": 160},
         {"label": "Voucher Code", "fieldname": "voucher_code", "fieldtype": "Link", "options": "Sales Invoice", "width": 200},
