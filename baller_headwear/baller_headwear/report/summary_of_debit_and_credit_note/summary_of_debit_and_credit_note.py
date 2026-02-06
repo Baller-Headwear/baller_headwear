@@ -45,6 +45,7 @@ def get_voucher_notes(filters):
             )
         AND si.posting_date BETWEEN %(from_date)s AND %(to_date)s
         AND si.customer = 'International Headwear Pty Ltd'
+        ORDER BY si.posting_date DESC
     """
     data = frappe.db.sql(credit_note_query, filters, as_dict=True)
     return data
