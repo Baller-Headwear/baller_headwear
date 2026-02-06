@@ -28,7 +28,6 @@ def get_voucher_notes(filters):
             si.name AS note_number,
             0 AS debit_amount,
             si.grand_total AS amount,
-            si.remarks AS remark,
             si.posting_date,
             si.is_debit_note,
             (
@@ -62,8 +61,9 @@ def get_data_report(filters):
     voucher_notes = get_voucher_notes(filters)
 
     data = []
-    remark = ''
+ 
     for item in voucher_notes:
+        remark = ''
         sale_order = item.get("sales_order")
         amount_update = 0
         quotation = ''
