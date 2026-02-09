@@ -115,7 +115,14 @@ def get_data_report(filters):
                         f" change from {old_rate} to {current_rate} <br>"
                     )
 
-            
+        existing_sales_orders = {
+                d.get('sales_order') for d in data if d.get('sales_order')
+            }
+
+        sales_order = item.get('sales_order')
+
+        if sales_order in existing_sales_orders:
+            amount_update = 0
 
         if item.get('is_debit_note'):
             data.append({
