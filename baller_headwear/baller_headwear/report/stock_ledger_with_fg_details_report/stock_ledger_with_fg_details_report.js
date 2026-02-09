@@ -23,6 +23,18 @@ frappe.query_reports["Stock Ledger with FG Details Report"] = {
             label: __("Warehouse"),
             fieldtype: "Link",
             options: "Warehouse"
+        },
+        {
+            fieldtype: "Select",
+            fieldname: "voucher_type",
+            label: __("Voucher Type"),
+            options: [
+                "",
+                'Material Transfer',
+                "Material Transfer for Manufacture",
+                "Material Issue",
+                "Manufacture",
+            ].join("\n")
         }
     ]
 };

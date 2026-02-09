@@ -8,11 +8,11 @@ def execute(filters):
 
 def get_columns():
     columns = [
+        {"label": "Warehouse", "fieldname": "warehouse", "fieldtype": "Data", "width": 150},
         {"label": "Date", "fieldname": "posting_date", "fieldtype": "Date", "width": 150},
-        {"label": "Voucher #", "fieldname": "se_name", "fieldtype": "Data", "width": 150},
+        {"label": "Voucher #", "fieldname": "se_name", "fieldtype": "Link", "options": 'Stock Entry', "width": 150},
         {"label": "Voucher Type", "fieldname": "stock_entry_type", "fieldtype": "Data", "width": 150},
         {"label": "Bom", "fieldname": "bom_name", "fieldtype": "Data", "width": 150},
-        # {"label": "Work Order", "fieldname": "work_order", "fieldtype": "Data", "width": 150},
         {"label": "Cost Subject", "fieldname": "top_item", "fieldtype": "Data", "width": 150},
         {"label": "Request Item", "fieldname": "rm_item", "fieldtype": "Link", "options": "Item", "width": 140},
         {"label": "FG Item", "fieldname": "fg_item", "fieldtype": "Link", "options": "Item", "width": 140},
@@ -23,7 +23,7 @@ def get_columns():
         {"label": "Out Qty", "fieldname": "out_qty", "fieldtype": "Float", "width": 150},
         {"label": "Out Amount", "fieldname": "out_amount", "fieldtype": "Currency", "width": 250},
         {"label": "Balance Qty", "fieldname": "balance_qty", "fieldtype": "Float", "width": 150},
-        {"label": "Balance Value", "fieldname": "balance_value", "fieldtype": "Float", "width": 150},
+        {"label": "Balance Value", "fieldname": "balance_value", "fieldtype": "Float", "width": 150}
     ]
 
     return columns
@@ -31,22 +31,27 @@ def get_columns():
 def get_data(filters):
     from_date = get_datetime(filters.from_date + " 00:00:00")
     to_date = get_datetime(filters.to_date + " 23:59:59")
+    voucher_type = filters.voucher_type
     warehouse = filters.warehouse
     cost_subject = filters.cost_subject
     params = {
         'from_date': from_date,
         'to_date': to_date,
         'warehouse': warehouse,
-        'cost_subject': cost_subject
+        'cost_subject': cost_subject,
+        'voucher_type': voucher_type
     }
 
     conditions = ""
     if warehouse:
-        conditions += " AND sed.s_warehouse = %(warehouse)s"
+        conditions += " AND sle.warehouse = %(warehouse)s"
     if cost_subject:
         conditions += " AND bt.top_item = %(cost_subject)s"
     if from_date and to_date:
         conditions += " AND se.posting_date BETWEEN %(from_date)s AND %(to_date)s"
+
+    if voucher_type:
+        conditions += " AND se.stock_entry_type  = %(voucher_type)s"
 
     data = frappe.db.sql(f"""
         WITH RECURSIVE bom_tree AS (
@@ -71,12 +76,13 @@ def get_data(filters):
             sed.uom,
             sed.s_warehouse,
             sed.t_warehouse,
+            sle.warehouse,
             ROUND(sed.basic_rate,2) as unit_price,
             wo.production_item AS fg_item,
             CASE 
-                WHEN se.stock_entry_type IN ('Material Transfer for Manufacture','Manufacture') AND sed.s_warehouse IS NOT NULL THEN ROUND(sed.qty,3) ELSE 0 END AS out_qty,
+                WHEN se.stock_entry_type IN ('Material Transfer for Manufacture', 'Material Transfer', 'Material Issue', 'Manufacture') AND sed.s_warehouse IS NOT NULL THEN ROUND(sed.qty,3) ELSE 0 END AS out_qty,
             CASE 
-                WHEN se.stock_entry_type IN ('Material Transfer for Manufacture','Manufacture') AND sed.s_warehouse IS NOT NULL THEN ROUND(sed.basic_amount,2) ELSE 0 END AS out_amount,
+                WHEN se.stock_entry_type IN ('Material Transfer for Manufacture', 'Material Transfer', 'Material Issue', 'Manufacture') AND sed.s_warehouse IS NOT NULL THEN ROUND(sed.basic_amount,2) ELSE 0 END AS out_amount,
             CASE 
                 WHEN se.stock_entry_type = 'Manufacture' AND sed.t_warehouse IS NOT NULL THEN ROUND(sed.qty,3) ELSE 0 END AS in_qty,
             CASE 
