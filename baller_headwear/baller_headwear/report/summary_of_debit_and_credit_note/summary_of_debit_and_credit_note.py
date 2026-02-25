@@ -123,6 +123,7 @@ def get_data_report(filters):
 
         if sales_order in existing_sales_orders:
             amount_update = 0
+            remark = ''
 
         if item.get('is_debit_note'):
             data.append({
