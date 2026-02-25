@@ -135,8 +135,8 @@ def get_data_report(filters):
                 'posting_date': item.get('posting_date', ''),
                 'debit_amount': item.get('amount', 0),
                 'amount_credit_note': 0,
-                'amount_update': amount_update,
-                'remark': remark
+                'amount_update': 0,
+                'remark': ''
             })
         else:
             data.append({
@@ -148,6 +148,20 @@ def get_data_report(filters):
                 'posting_date': item.get('posting_date', ''),
                 'amount_debit_note': 0,
                 'credit_amount': item.get('amount', 0),
+                'amount_update': 0,
+                'remark': ''
+            })
+
+        if amount_update:
+            data.append({
+                'quotation': quotation,
+                'sales_order': item.get('sales_order', ''),
+                'voucher_code': '',
+                'voucher_code_debit':'',
+                'voucher_type': '',
+                'posting_date': item.get('posting_date', ''),
+                'amount_debit_note': 0,
+                'credit_amount': 0,
                 'amount_update': amount_update,
                 'remark': remark
             })
