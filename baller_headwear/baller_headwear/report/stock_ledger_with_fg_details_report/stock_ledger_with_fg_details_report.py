@@ -67,7 +67,7 @@ def get_data(filters):
             UNION ALL
             SELECT 
                 child_bom.name,
-                bt.top_itemW
+                bt.top_item
             FROM `tabBOM Item` bi
             JOIN `tabBOM` child_bom 
                 ON bi.bom_no = child_bom.name
