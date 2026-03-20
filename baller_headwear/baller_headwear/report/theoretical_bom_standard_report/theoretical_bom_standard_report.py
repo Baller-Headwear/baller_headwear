@@ -98,7 +98,7 @@ def get_report_root_item(filters):
             WHERE wo2.docstatus = 1
                 AND wo2.status IN ('In Process', 'Completed')
                 AND wo2.actual_start_date BETWEEN %(from_date)s AND %(to_date)s
-                AND i2.item_group IN ('CAP', 'Trucker Cap', 'Stubby Cooler')
+                AND i2.item_group IN ('CAP', 'Trucker Cap', 'Stubby Cooler', 'Bucket Hat')
             GROUP BY wo2.production_item
             HAVING COUNT(DISTINCT wo2.name) = 2
         )
@@ -127,7 +127,7 @@ def get_report_root_item(filters):
         AND wo.status IN ('In Process', 'Completed')
         AND wo.actual_start_date BETWEEN %(from_date)s AND %(to_date)s
         {condition}
-        AND i.item_group IN ('CAP', 'Trucker Cap', 'Stubby Cooler')
+        AND i.item_group IN ('CAP', 'Trucker Cap', 'Stubby Cooler', 'Bucket Hat')
         ORDER BY wo.actual_start_date DESC
     """
 
