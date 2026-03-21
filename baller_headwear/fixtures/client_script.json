@@ -895,10 +895,10 @@
   "doctype": "Client Script",
   "dt": "Production Plan",
   "enabled": 1,
-  "modified": "2026-03-17 11:13:14.559626",
+  "modified": "2026-03-20 10:45:42.638954",
   "module": null,
   "name": "Add Overmanufacturing",
-  "script": "frappe.ui.form.on('Production Plan', {\n    custom_get_extra_manufacture_qty(frm) {\n        if (!frm.doc.po_items || frm.doc.po_items.length === 0) {\n            frappe.msgprint(__('No Assembly Items in Production Plan'));\n            return;\n        }\n\n        if (!frm.doc.custom_item_type_melinctc) {\n            frappe.msgprint(__('Please select Item Type (Production Plan Wastage)'));\n            return;\n        }\n\n        frappe.call({\n            method: \"get_extra_qty_from_wastage\",\n            args: {\n                doc: frm.doc\n            },\n            callback: function (r) {\n                if (!r.message || !r.message.po_items) return;\n\n                const updated_map = {};\n                r.message.po_items.forEach(row => {\n                    updated_map[row.item_code] = row;\n                });\n\n                frm.doc.po_items.forEach(row => {\n                    const updated = updated_map[row.item_code];\n                    if (!updated) return;   \n                    extra_percent = updated.extra_qty\n                    row.extra_qty = Math.ceil(row.planned_qty * (extra_percent / 100));\n                    row.manufacturing_qty = updated.manufacturing_qty || row.planned_qty;\n                    row.planned_qty = row.manufacturing_qty + row.extra_qty;\n                });\n\n                frm.refresh_field(\"po_items\");\n                frappe.msgprint(__('Extra manufacturing quantity applied'));\n            }\n        });\n    }\n});\n",
+  "script": "frappe.ui.form.on('Production Plan', {\n    custom_get_extra_manufacture_qty(frm) {\n        if (!frm.doc.po_items || frm.doc.po_items.length === 0) {\n            frappe.msgprint(__('No Assembly Items in Production Plan'));\n            return;\n        }\n\n        if (!frm.doc.custom_item_type_melinctc) {\n            frappe.msgprint(__('Please select Item Type (Production Plan Wastage)'));\n            return;\n        }\n\n        frappe.call({\n            method: \"get_extra_qty_from_wastage\",\n            args: {\n                doc: frm.doc\n            },\n            callback: function (r) {\n                if (!r.message || !r.message.po_items) return;\n\n                const updated_map = {};\n                r.message.po_items.forEach(row => {\n                    updated_map[row.item_code] = row;\n                });\n\n                frm.doc.po_items.forEach(row => {\n                    const updated = updated_map[row.item_code];\n                    if (!updated) return;   \n                    \n                    let extra_percent = updated.extra_qty; // loss percent\n                    const loss_based_on = updated.loss_based_on;\n                    const extra_quantity = updated.extra_quantity;\n                    if (loss_based_on == 'Quantity') {\n                        row.extra_qty = extra_quantity;\n                        row.manufacturing_qty = updated.manufacturing_qty || row.planned_qty;\n                        row.planned_qty = row.manufacturing_qty + extra_quantity;\n                    } else {\n                        row.extra_qty = Math.ceil(row.planned_qty * (extra_percent / 100));\n                        row.manufacturing_qty = updated.manufacturing_qty || row.planned_qty;\n                        row.planned_qty = row.manufacturing_qty + row.extra_qty;\n                    }\n                });\n\n                frm.refresh_field(\"po_items\");\n                frappe.msgprint(__('Extra manufacturing quantity applied'));\n            }\n        });\n    }\n});",
   "view": "Form"
  },
  {
@@ -921,6 +921,17 @@
   "module": null,
   "name": "Packing Slip Auto Fill Custom Field",
   "script": "frappe.ui.form.on('Packing Slip', {\n\tdelivery_note(frm) {\n\t\tif (!frm.doc.delivery_note) return;\n\t\tfrappe.db.get_doc('Delivery Note', frm.doc.delivery_note).then(dn => {\n\t\t\tlet invoice_map = {};\n\t\t\t// lấy sales invoice từ từng delivery item\n\t\t\tdn.items.forEach(dn_item => {\n\t\t\t\tif (dn_item.against_sales_invoice) {\n\t\t\t\t\tinvoice_map[dn_item.item_code] = dn_item.against_sales_invoice;\n\t\t\t\t}\n\t\t\t});\n\t\t\t// duyệt từng item trong packing slip\n\t\t\tfrm.doc.items.forEach(row => {\n\t\t\t\tlet invoice = invoice_map[row.item_code];\n\t\t\t\tif (!invoice) return;\n\t\t\t\t// LẤY SALES INVOICE\n\t\t\t\tfrappe.db.get_doc(\"Sales Invoice\", invoice).then(si => {\n\t\t\t\t\tlet matched_item = si.items.find(i => i.item_code === row.item_code);\n\t\t\t\t\tif (matched_item) {\n\t\t\t\t\t\tfrappe.model.set_value(\n\t\t\t\t\t\t\trow.doctype,\n\t\t\t\t\t\t\trow.name,\n\t\t\t\t\t\t\t\"custom_po_number\",\n\t\t\t\t\t\t\tmatched_item.custom_po_number\n\t\t\t\t\t\t);\n\t\t\t\t\t}\n\t\t\t\t});\n\n\t\t\t\t// LẤY HTS + UPC từ Item Master\n\t\t\t\tfrappe.db.get_doc(\"Item\", row.item_code).then(item => {\n\t\t\t\t\tconsole.log(\"Item data:\", item);\n\t\t\t\t\tfrappe.model.set_value(\n\t\t\t\t\t\trow.doctype,\n\t\t\t\t\t\trow.name,\n\t\t\t\t\t\t\"custom_hts_code\",\n\t\t\t\t\t\titem.custom_hts_code\n\t\t\t\t\t);\n\t\t\t\t\tfrappe.model.set_value(\n\t\t\t\t\t\trow.doctype,\n\t\t\t\t\t\trow.name,\n\t\t\t\t\t\t\"custom_upc_code\",\n\t\t\t\t\t\titem.custom_upc_code\n\t\t\t\t\t);\n\t\t\t\t});\n\t\t\t});\n\t\t});\n\t}\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Production Plan Wastage",
+  "enabled": 1,
+  "modified": "2026-03-20 10:59:46.153907",
+  "module": null,
+  "name": "On Change Production Plan Wastage",
+  "script": "frappe.ui.form.on('Production Plan Wastage Item', {\n    loss_based_on: function(frm, cdt, cdn) {\n        let row = locals[cdt][cdn];\n        if (row.loss_based_on == 'Quantity') {\n            \n        } else {\n            \n        }\n    }\n});",
   "view": "Form"
  }
 ]

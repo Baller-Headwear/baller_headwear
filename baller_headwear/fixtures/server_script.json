@@ -1149,13 +1149,13 @@
   "doctype_event": "Before Insert",
   "enable_rate_limit": 0,
   "event_frequency": "All",
-  "modified": "2026-02-05 10:49:33.995477",
+  "modified": "2026-03-19 11:32:20.342901",
   "module": null,
   "name": "get_extra_qty_from_wastage",
   "rate_limit_count": 5,
   "rate_limit_seconds": 86400,
   "reference_doctype": null,
-  "script": "doc = frappe.form_dict.get(\"doc\")\nif not doc:\n    frappe.throw(\"No document data received\")\n\n# Convert JSON string → dict\nif isinstance(doc, str):\n    doc = json.loads(doc)\n\n# 👉 Field Item Type (Melin/CTC)\nwastage_doc = doc.get(\"custom_item_type_melinctc\")\n\nif not wastage_doc:\n    frappe.throw(\"Please select Item Type (Production Plan Wastage)\")\n\nfor item in doc.get(\"po_items\", []):\n    planned_qty = item.get(\"planned_qty\")\n\n    if not planned_qty:\n        continue\n\n    planned_qty = float(planned_qty)\n\n    wastage = frappe.db.sql(\"\"\"\n        SELECT extra_qty\n        FROM `tabProduction Plan Wastage Item`\n        WHERE parent = %s\n          AND parenttype = 'Production Plan Wastage'\n          AND %s BETWEEN manufacture_range_from AND manufacture_range_to\n        ORDER BY manufacture_range_from DESC\n        LIMIT 1\n    \"\"\", (wastage_doc, planned_qty), as_dict=True)\n\n    extra_qty = float(wastage[0][\"extra_qty\"]) if wastage else 0\n\n    item[\"extra_qty\"] = extra_qty\n    item[\"manufacturing_qty\"] = planned_qty\n\nfrappe.response[\"message\"] = doc\n",
+  "script": "doc = frappe.form_dict.get(\"doc\")\nif not doc:\n    frappe.throw(\"No document data received\")\n\n# Convert JSON string → dict\nif isinstance(doc, str):\n    doc = json.loads(doc)\n\n# 👉 Field Item Type (Melin/CTC)\nwastage_doc = doc.get(\"custom_item_type_melinctc\")\n\nif not wastage_doc:\n    frappe.throw(\"Please select Item Type (Production Plan Wastage)\")\n\nfor item in doc.get(\"po_items\", []):\n    planned_qty = item.get(\"planned_qty\")\n\n    if not planned_qty:\n        continue\n\n    planned_qty = float(planned_qty)\n\n    wastage = frappe.db.sql(\"\"\"\n        SELECT extra_qty, extra_quantity, loss_based_on\n        FROM `tabProduction Plan Wastage Item`\n        WHERE parent = %s\n          AND parenttype = 'Production Plan Wastage'\n          AND %s BETWEEN manufacture_range_from AND manufacture_range_to\n        ORDER BY manufacture_range_from DESC\n        LIMIT 1\n    \"\"\", (wastage_doc, planned_qty), as_dict=True)\n\n    extra_qty = float(wastage[0][\"extra_qty\"]) if wastage else 0\n    extra_quantity = wastage[0][\"extra_quantity\"] if wastage else 0\n    loss_based_on = wastage[0][\"loss_based_on\"] if wastage else ''\n\n    item[\"extra_qty\"] = extra_qty\n    item[\"manufacturing_qty\"] = planned_qty\n    item[\"loss_based_on\"] = loss_based_on\n    item[\"extra_quantity\"] = extra_quantity\n\nfrappe.response[\"message\"] = doc\n",
   "script_type": "API"
  },
  {
