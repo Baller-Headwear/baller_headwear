@@ -34,6 +34,8 @@ frappe.query_reports["Stock Ledger with FG Details Report"] = {
                 "Material Transfer for Manufacture",
                 "Material Issue",
                 "Manufacture",
+                'Material Receipt',
+                'Send to Subcontractor',
             ].join("\n")
         }
     ]

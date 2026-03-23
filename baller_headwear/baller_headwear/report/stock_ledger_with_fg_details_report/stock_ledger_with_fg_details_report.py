@@ -117,6 +117,8 @@ def get_data(filters):
                 'Material Transfer for Manufacture',
                 'Material Transfer',
                 'Material Issue',
+                'Material Receipt',
+                'Send to Subcontractor',
                 'Manufacture'
             )
         LEFT JOIN `tabWork Order` wo
