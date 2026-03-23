@@ -132,8 +132,6 @@ def get_data(filters):
             ON itm.name = sed.item_code
         WHERE 1=1
             {conditions}
-        AND IFNULL(itm.item_group, '') != 'Semi-finished'
-        AND IFNULL(itm.item_group, '') NOT IN ('CAP', 'Trucker Cap', 'Stubby Cooler', 'Bucket Hat')
         ORDER BY sle.warehouse DESC, se.posting_date ASC
     """, params, as_dict=True)
 
