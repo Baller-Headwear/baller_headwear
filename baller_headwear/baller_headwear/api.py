@@ -1026,6 +1026,9 @@ def create_material_request_for_transfer_with_jobcard(items, user, required_date
 
             for item in job_items:
                 qty = flt(item.get("additional_qty"))
+                if item.get('reason'):
+                    mr.custom_reason = item.get('reason')
+
                 if qty <= 0:
                     continue
 
