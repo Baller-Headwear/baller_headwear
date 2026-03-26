@@ -6,7 +6,7 @@ from datetime import datetime, date
 from frappe.model.mapper import get_mapped_doc
 from frappe.query_builder.functions import Sum
 from frappe.utils import cint, cstr, flt, get_link_to_form, getdate, new_line_sep, nowdate
-
+from erpnext.manufacturing.doctype.job_card.job_card import make_material_request
 from erpnext.buying.utils import check_on_hold_or_closed_status, validate_for_items
 from erpnext.controllers.buying_controller import BuyingController
 from erpnext.manufacturing.doctype.work_order.work_order import get_item_details
@@ -944,3 +944,131 @@ def run_melin():
             timeout=3600,
             new_data=batch
         )
+
+@frappe.whitelist()
+def create_material_request_with_jobcard(job_cards, workstation, user, required_datetime):
+    job_cards = json.loads(job_cards)
+    department = frappe.db.get_value("Employee", {"user_id": user}, "department")
+    created_mrs = []
+    errors = []
+    employee_name = frappe.db.get_value(
+        "Employee",
+        {"user_id": user},
+        "employee_name"
+    )
+    if job_cards:
+        for jobcard in job_cards:
+            try:
+                mr = make_material_request(jobcard)
+                if mr:
+                    doc = frappe.get_doc(mr)
+                    doc.schedule_date = required_datetime
+                    doc.custom_regular = 1
+                    doc.custom_requester = employee_name
+                    doc.custom_requester_dept = department
+                    doc.custom_parent_department = ''
+                    doc.set_from_warehouse = 'Main Store - BHV'
+                    doc.set_warehouse = 'Work In Progress - BHV'
+                    doc.insert(ignore_permissions=True)
+                    doc.submit()
+                    frappe.db.set_value(doc.doctype, doc.name, "workflow_state", "Submited")
+                    created_mrs.append(doc.name)
+
+            except Exception as e:
+                errors.append(f"{jobcard}: {str(e)}")
+                print(frappe.get_traceback())
+
+
+    return {
+        "created": created_mrs,
+        "errors": errors
+    }
+
+@frappe.whitelist()
+def create_material_request_for_transfer_with_jobcard(items, user, required_datetime):
+    from frappe.utils import flt
+    from collections import defaultdict
+    import json
+    if isinstance(items, str):
+        items = json.loads(items)
+
+    department = frappe.db.get_value("Employee", {"user_id": user}, "department")
+    employee_name = frappe.db.get_value("Employee", {"user_id": user}, "employee_name")
+    company = frappe.db.get_value("Department", department, "company")
+    created_mrs = []
+    errors = []
+
+    grouped_items = defaultdict(list)
+    for item in items:
+        job_card = item.get("job_card")
+        if job_card:
+            grouped_items[job_card].append(item)
+
+    for job_card, job_items in grouped_items.items():
+        try:
+            mr_name = make_material_request(job_card)
+            mr_name.items = []
+
+            if not mr_name:
+                errors.append(f"{job_card}: MR not created")
+                continue
+
+            mr = frappe.get_doc(mr_name)
+            mr.material_request_type = "Material Transfer"
+            mr.schedule_date = required_datetime
+            mr.custom_not_regular = 1
+            mr.company = company
+            mr.custom_requester = employee_name
+            mr.custom_requester_dept = department
+            mr.custom_parent_department = ''
+            mr.set_from_warehouse = 'Main Store - BHV'
+            mr.set_warehouse = 'Work In Progress - BHV'
+
+            for item in job_items:
+                qty = flt(item.get("additional_qty"))
+                if qty <= 0:
+                    continue
+
+                mr.append("items", {
+                    "item_code": item.get("item_code"),
+                    "uom": item.get("uom"),
+                    "qty": qty,
+                    "schedule_date": required_datetime,
+                    "from_warehouse": item.get("warehouse") or mr.set_from_warehouse,
+                    "warehouse": mr.set_warehouse,
+                    "job_card": job_card
+                })
+
+            if not mr.items:
+                frappe.log_error(f"No valid items for Job Card {job_card}", "MR Warning")
+                continue
+
+            mr.insert(ignore_permissions=True)
+            mr.submit()
+            created_mrs.append(mr.name)
+
+        except Exception as e:
+            errors.append(f"{job_card}: {str(e)}")
+            frappe.log_error(frappe.get_traceback(), f"MR Error - {job_card}")
+
+    return {"created": created_mrs, "errors": errors}
+
+@frappe.whitelist()
+def get_jobcard_raw_materials(job_cards):
+    job_cards = json.loads(job_cards)
+    items = []
+    for jc in job_cards:
+        doc = frappe.get_doc("Job Card", jc)
+        for row in doc.items:
+            items.append({
+                "job_card": jc,
+                "production_item": doc.production_item,
+                "warehouse": row.source_warehouse,
+                "item_code": row.item_code,
+                "item_name": row.item_name,
+                "qty": row.required_qty,
+                "uom": row.uom,
+                "transferred_qty": row.transferred_qty
+            })
+
+    return items
