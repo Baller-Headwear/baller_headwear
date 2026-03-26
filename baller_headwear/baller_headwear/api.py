@@ -1017,7 +1017,7 @@ def create_material_request_for_transfer_with_jobcard(items, user, required_date
             mr.material_request_type = "Material Transfer"
             mr.schedule_date = required_datetime
             mr.custom_not_regular = 1
-            mr.company = company
+            mr.company = company or 'Baller Headwear Vietnam Ltd'
             mr.custom_requester = employee_name
             mr.custom_requester_dept = department
             mr.custom_parent_department = ''
