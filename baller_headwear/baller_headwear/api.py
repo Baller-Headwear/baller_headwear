@@ -1007,12 +1007,12 @@ def create_material_request_for_transfer_with_jobcard(items, user, required_date
     for job_card, job_items in grouped_items.items():
         try:
             mr_name = make_material_request(job_card)
-            mr_name.items = []
 
             if not mr_name:
                 errors.append(f"{job_card}: MR not created")
                 continue
 
+            mr_name.items = []
             mr = frappe.get_doc(mr_name)
             mr.material_request_type = "Material Transfer"
             mr.schedule_date = required_datetime
