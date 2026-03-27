@@ -651,9 +651,9 @@
   "doctype": "Workflow",
   "document_type": "Material Request",
   "is_active": 1,
-  "modified": "2026-03-19 09:13:35.223088",
+  "modified": "2026-03-24 09:20:21.474904",
   "name": "Material Request Full Flow",
-  "override_status": 1,
+  "override_status": 0,
   "send_email_alert": 0,
   "states": [
    {
