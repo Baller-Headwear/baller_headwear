@@ -1244,13 +1244,13 @@
   "doctype_event": "After Submit",
   "enable_rate_limit": 0,
   "event_frequency": "All",
-  "modified": "2026-03-18 11:54:40.711717",
+  "modified": "2026-03-24 09:36:38.445314",
   "module": null,
   "name": "By Pass Workflow Material Request",
   "rate_limit_count": 5,
   "rate_limit_seconds": 86400,
   "reference_doctype": "Material Request",
-  "script": "if doc.material_request_type == 'Purchase':\r\n    doc.custom_regular = 1\r\n    frappe.db.set_value(doc.doctype, doc.name, \"workflow_state\", \"Submited\")\r\n    doc.docstatus = 1",
+  "script": "if doc.material_request_type == 'Purchase' and doc.custom_not_regular != 1:\r\n    doc.custom_regular = 1\r\n    frappe.db.set_value(doc.doctype, doc.name, \"workflow_state\", \"Submited\")\r\n    doc.docstatus = 1",
   "script_type": "DocType Event"
  }
 ]
