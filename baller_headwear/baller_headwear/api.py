@@ -68,12 +68,10 @@ def make_stock_entry(source_name, target_doc=None):
 			job_card_details = frappe.get_all(
 				"Job Card", filters={"name": source.job_card}, fields=["bom_no", "for_quantity"]
 			)
-
 			if job_card_details and job_card_details[0]:
 				target.bom_no = job_card_details[0].bom_no
 				target.fg_completed_qty = job_card_details[0].for_quantity
 				target.from_bom = 1
-
 	doclist = get_mapped_doc(
 		"Material Request",
 		source_name,
@@ -225,7 +223,6 @@ def set_custom_id_fields_for_work_order(doc, method):
 
         month = planned_start_date.month
         year = planned_start_date.year
-
         year_formatted = str(year)[-2:]  
         month_formatted = f"{month:02d}" 
 
@@ -275,8 +272,6 @@ def set_custom_id_fields_for_posting_date_payment_entry(doc, method):
         year = posting_date.year
         year_formatted = str(year)[-2:]  
         month_formatted = f"{month:02d}" 
-        
-
         doc.custom_id_month = month_formatted
         doc.custom_id_year = year_formatted
 
@@ -294,7 +289,6 @@ def set_custom_id_fields_for_asset(doc, method):
     if doc.purchase_date:
         purchase_date = doc.purchase_date
         if isinstance(purchase_date, date):
-            # It's already a date object, keep as is
             pass
         else:
             # Convert from string (if it's a string or something else)
@@ -971,7 +965,7 @@ def create_material_request_with_jobcard(job_cards, workstation, user, required_
                     doc.set_warehouse = 'Work In Progress - BHV'
                     doc.insert(ignore_permissions=True)
                     doc.submit()
-                    frappe.db.set_value(doc.doctype, doc.name, "workflow_state", "Submited")
+                    frappe.db.set_value(doc.doctype, doc.name, "workflow_state", "Submitted")
                     created_mrs.append(doc.name)
 
             except Exception as e:
@@ -1075,3 +1069,73 @@ def get_jobcard_raw_materials(job_cards):
             })
 
     return items
+
+@frappe.whitelist()
+def get_current_employee():
+    result = frappe.db.sql("""
+        SELECT 
+            e.department,
+            e.designation,
+            d.parent_department
+        FROM `tabEmployee` e
+        LEFT JOIN `tabDepartment` d ON e.department = d.name
+        WHERE e.user_id = %s
+        LIMIT 1
+    """, (frappe.session.user,), as_dict=True)
+
+    return result[0] if result else None
+
+@frappe.whitelist()
+def get_scrap_items_jobcard(job_card):
+    if not job_card:
+        frappe.throw("Job Card is required")
+
+    jc = frappe.get_doc("Job Card", job_card)
+
+    return [
+        {
+            "item_code": d.item_code,
+            "item_name": d.item_name,
+            "qty": d.stock_qty,
+            "uom": d.stock_uom
+        }
+        for d in jc.scrap_items
+    ]
+
+@frappe.whitelist()
+def create_scrap_items(items, user, jobcard):
+    if isinstance(items, str):
+        items = json.loads(items)
+
+    if not items:
+        frappe.throw("Items is empty")
+
+    if not jobcard:
+        frappe.throw("Job Card is required")
+
+    jc = frappe.get_doc("Job Card", jobcard)
+    jc.set("scrap_items", [])
+    for row in items:
+        if not isinstance(row, dict):
+            continue
+
+        item_code = row.get("item_code")
+        qty = flt(row.get("qty"))
+
+        if not item_code or qty <= 0:
+            continue
+
+        uom = frappe.db.get_value("Item", item_code, "stock_uom")
+        jc.append("scrap_items", {
+            "item_code": item_code,
+            "stock_uom": uom,
+            "stock_qty": qty
+        })
+
+    jc.save(ignore_permissions=True)
+
+    return jc.name
+
+@frappe.whitelist()
+def update_completed_qty_jobcard(items, user, jobcard):
+    pass
