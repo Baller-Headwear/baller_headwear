@@ -140,7 +140,8 @@ doc_events = {
         "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_transaction_date"
     },
     "Work Order": {
-        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_work_order"
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_work_order",
+        "before_insert": "baller_headwear.baller_headwear.manufacturing.work_order.set_workstation_from_production_plan",
     },
     "Payment Entry": {
         "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date_payment_entry"
@@ -152,7 +153,9 @@ doc_events = {
         "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_transaction_date"
     },
     "Production Plan": {
-        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
+        "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date",
+        "before_save": "baller_headwear.baller_headwear.manufacturing.production_plan.before_submit_production_plan",
+        "before_submit": "baller_headwear.baller_headwear.manufacturing.production_plan.before_submit_production_plan",
     },
     "Stock Entry": {
         "before_naming": "baller_headwear.baller_headwear.api.set_custom_id_fields_for_posting_date"
@@ -262,5 +265,4 @@ doc_events = {
 # auth_hooks = [
 # 	"baller_headwear.auth.validate"
 # ]
-
 fixtures = ["Custom Field","Print Format","Client Script","Workflow","Role","Server Script"]
