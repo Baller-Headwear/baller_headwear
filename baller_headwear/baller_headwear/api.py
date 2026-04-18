@@ -1139,3 +1139,33 @@ def create_scrap_items(items, user, jobcard):
 @frappe.whitelist()
 def update_completed_qty_jobcard(items, user, jobcard):
     pass
+
+
+def get_employees():
+    return frappe.get_all(
+        "Employee",
+        filters={
+            "status": "Active"
+        },
+        fields=[
+            "name",
+            "employee_name",
+            "attendance_device_id",
+            "department",
+            "designation",
+            "status"
+        ]
+    )
+
+@frappe.whitelist()
+def run_queue_sync_employees():
+    item_list = get_employees()
+    BATCH_SIZE = 5
+    for i in range(0, len(item_list), BATCH_SIZE):
+        batch = item_list[i:i + BATCH_SIZE]
+        frappe.enqueue(
+            "baller_headwear.baller_headwear.employee.sync_in_out.run",
+            queue="long",
+            timeout=3600,
+            employees=batch
+        )
