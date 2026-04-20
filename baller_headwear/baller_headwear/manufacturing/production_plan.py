@@ -1,6 +1,5 @@
 import frappe
 
-
 def collect_sub_assembly_boms(parent_bom, result):
     bom_items = frappe.get_all(
         "BOM Item",
@@ -45,7 +44,7 @@ def before_submit_production_plan(doc, method):
         ws = sub_map.get(sub_bom_no) or sub_map.get(sub_item_code)
         if not ws:
             continue
-            
+
         if sub_bom_no in sub_map:
             sub.custom_work_station = sub_map[sub_bom_no]
         elif sub_item_code in sub_map:
