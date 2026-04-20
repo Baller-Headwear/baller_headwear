@@ -218,13 +218,13 @@
   "doctype_event": "After Submit",
   "enable_rate_limit": 0,
   "event_frequency": "All",
-  "modified": "2026-04-17 11:04:22.964081",
+  "modified": "2026-04-20 17:09:34.249927",
   "module": null,
   "name": "update_WO_status",
   "rate_limit_count": 5,
   "rate_limit_seconds": 86400,
   "reference_doctype": "Stock Entry",
-  "script": "if doc.work_order:\n    try:\n        wo = frappe.get_doc(\"Work Order\", doc.work_order)\n        \n        if hasattr(wo, \"update_work_order_qty\"):\n            wo.update_work_order_qty()\n\n        if hasattr(wo, \"update_status\"):\n            wo.update_status()\n\n        wo.db_update()\n\n    except Exception as e:\n        frappe.log_error(str(e), \"Update WO Status Failed\")",
+  "script": "if doc.work_order:\r\n    try:\r\n        wo = frappe.get_doc(\"Work Order\", doc.work_order)\r\n\r\n        wo.run_method(\"update_work_order_qty\")\r\n        wo.run_method(\"update_status\")\r\n\r\n        wo.save()\r\n\r\n    except Exception:\r\n        frappe.log_error(frappe.get_traceback(), \"Update WO Status Failed\")",
   "script_type": "DocType Event"
  },
  {
