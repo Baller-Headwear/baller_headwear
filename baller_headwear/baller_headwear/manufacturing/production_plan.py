@@ -28,7 +28,6 @@ def before_submit_production_plan(doc, method):
         work_station = row.get("custom_work_station")
 
         if not root_bom_no or not work_station:
-            print('1111111')
             continue
 
         result = []
@@ -43,7 +42,10 @@ def before_submit_production_plan(doc, method):
     for sub in doc.sub_assembly_items:
         sub_bom_no = sub.get("bom_no")
         sub_item_code = sub.get("sub_assembly_item_code")
-        print(sub_map[sub_bom_no])
+        ws = sub_map.get(sub_bom_no) or sub_map.get(sub_item_code)
+        if not ws:
+            continue
+            
         if sub_bom_no in sub_map:
             sub.custom_work_station = sub_map[sub_bom_no]
         elif sub_item_code in sub_map:
